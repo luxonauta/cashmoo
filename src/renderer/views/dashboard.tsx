@@ -1,15 +1,20 @@
-import { useDashboard, useUser } from "../state";
+import { useEffect, useState } from "react";
+import { apiDashboard } from "../api";
+import { DashboardData } from "../types";
 
 export default function DashboardView(): JSX.Element {
-  const [user] = useUser();
-  const data = useDashboard();
+  const [data, setData] = useState<DashboardData | null>(null);
+
+  useEffect(() => {
+    apiDashboard().then(setData);
+  }, []);
+
   return (
     <section>
       <h2>Dashboard</h2>
-      <div>{user ? "Welcome, " + user.name : ""}</div>
-      <div>Total income: {data ? data.totalIncome : 0}</div>
+      <div>Total incomes: {data ? data.totalIncomes : 0}</div>
       <div>Total expenses: {data ? data.totalExpenses : 0}</div>
-      <div>Open card invoices: {data ? data.totalCardOpen : 0}</div>
+      <div>Total cards open: {data ? data.totalCardOpen : 0}</div>
       <div>Balance: {data ? data.balance : 0}</div>
     </section>
   );

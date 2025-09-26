@@ -16,53 +16,49 @@ export async function getDb(): Promise<sqlite3.Database> {
   return db;
 }
 
-export function queryExec(sql: string): Promise<void> {
-  return new Promise(async (resolve, reject) => {
-    const database = await getDb();
-    database.exec(sql, (err) => {
+export async function queryExec(sql: string): Promise<void> {
+  const d = await getDb();
+  await new Promise<void>((resolve, reject) => {
+    d.exec(sql, (err) => {
       if (err) reject(err);
       else resolve();
     });
   });
 }
 
-export function queryRun(
+export async function queryRun(
   sql: string,
   params: Array<string | number | null> = []
 ): Promise<{ lastID: number; changes: number }> {
-  return new Promise(async (resolve, reject) => {
-    const database = await getDb();
-    database.run(
-      sql,
-      params,
-      function (this: sqlite3.RunResult, err: Error | null) {
-        if (err) reject(err);
-        else resolve({ lastID: this.lastID, changes: this.changes });
-      }
-    );
+  const d = await getDb();
+  return await new Promise((resolve, reject) => {
+    d.run(sql, params, function (this: sqlite3.RunResult, err: Error | null) {
+      if (err) reject(err);
+      else resolve({ lastID: this.lastID, changes: this.changes });
+    });
   });
 }
 
-export function queryGet<T>(
+export async function queryGet<T>(
   sql: string,
-  ...params: Array<string | number | null>
+  params: Array<string | number | null> = []
 ): Promise<T> {
-  return new Promise(async (resolve, reject) => {
-    const database = await getDb();
-    database.get(sql, params, (err, row) => {
+  const d = await getDb();
+  return await new Promise((resolve, reject) => {
+    d.get(sql, params, (err, row) => {
       if (err) reject(err);
       else resolve(row as T);
     });
   });
 }
 
-export function queryAll<T>(
+export async function queryAll<T>(
   sql: string,
-  ...params: Array<string | number | null>
+  params: Array<string | number | null> = []
 ): Promise<T[]> {
-  return new Promise(async (resolve, reject) => {
-    const database = await getDb();
-    database.all(sql, params, (err, rows) => {
+  const d = await getDb();
+  return await new Promise((resolve, reject) => {
+    d.all(sql, params, (err, rows) => {
       if (err) reject(err);
       else resolve((rows as T[]) || []);
     });
@@ -74,7 +70,11 @@ export async function runMigrations(): Promise<void> {
   const migrationsDir = app.isPackaged
     ? path.join(appPath, "migrations")
     : path.join(process.cwd(), "src/main/migrations");
-  const init = path.join(migrationsDir, "001-init.sql");
-  const sql = await fs.promises.readFile(init, "utf-8");
-  await queryExec(sql);
+  const files = (await fs.promises.readdir(migrationsDir))
+    .filter((f) => f.endsWith('.sql'))
+    .sort();
+  for (const f of files) {
+    const sql = await fs.promises.readFile(path.join(migrationsDir, f), 'utf-8');
+    await queryExec(sql);
+  }
 }

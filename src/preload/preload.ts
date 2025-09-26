@@ -24,31 +24,17 @@ const api = {
     cardId: number | null;
     firstDueDate: string;
   }) => ipcRenderer.invoke("create-expense", payload),
-  listCards: () => ipcRenderer.invoke("list-cards"),
-  createCard: (payload: {
-    name: string;
-    closingDay: number;
-    dueDay: number;
-    limitAmount: number;
-  }) => ipcRenderer.invoke("create-card", payload),
-  listInvoices: (payload: {
-    cardId: number | null;
-    year: number | null;
-    month: number | null;
-  }) => ipcRenderer.invoke("list-invoices", payload),
-  payInvoice: (payload: { invoiceId: number }) =>
-    ipcRenderer.invoke("pay-invoice", payload),
   markExpensePaid: (payload: { expenseId: number; paidAt: string }) =>
     ipcRenderer.invoke("mark-expense-paid", payload),
+  listCards: () => ipcRenderer.invoke("list-cards"),
+  createCard: (payload: { name: string; closingDay: number; dueDay: number; limitAmount: number }) =>
+    ipcRenderer.invoke("create-card", payload),
+  listInvoices: (payload: { cardId?: number }) => ipcRenderer.invoke("list-invoices", payload),
+  payInvoice: (payload: { invoiceId: number }) => ipcRenderer.invoke("pay-invoice", payload),
   dashboard: () => ipcRenderer.invoke("dashboard"),
-  notifications: () => ipcRenderer.invoke("notifications")
+  notifications: () => ipcRenderer.invoke("notifications"),
+  clearAll: () => ipcRenderer.invoke("clear-all"),
 };
-
-declare global {
-  interface Window {
-    financeApi: typeof api;
-  }
-}
 
 (globalThis as unknown as { financeApi: typeof api }).financeApi = api;
 

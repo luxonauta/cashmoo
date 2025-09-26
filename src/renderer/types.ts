@@ -1,4 +1,4 @@
-export type Recurrence = "none" | "weekly" | "monthly" | "yearly";
+export type Recurrence = "none" | "weekly" | "biweekly" | "monthly" | "yearly";
 
 export interface UserProfile {
   id: number;
@@ -14,7 +14,6 @@ export interface IncomeRow {
   startDate: string;
   endDate: string | null;
   nextDate: string | null;
-  active: number;
 }
 
 export interface ExpenseRow {
@@ -45,15 +44,13 @@ export interface InvoiceRow {
   cardId: number;
   year: number;
   month: number;
-  closingDate: string;
-  dueDate: string;
-  totalAmount: number;
+  total: number;
   paid: number;
   paidAt: string | null;
 }
 
 export interface DashboardData {
-  totalIncome: number;
+  totalIncomes: number;
   totalExpenses: number;
   totalCardOpen: number;
   balance: number;
