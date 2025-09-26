@@ -1,0 +1,35 @@
+{
+  "name": "cashmoo",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/main/main.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc",
+    "start": "electron .",
+    "dev": "tsc -w",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "lint": "eslint . --fix && prettier . --write"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.36.0",
+    "@types/node": "22.7.5",
+    "@types/react": "18.3.5",
+    "@types/react-dom": "18.3.0",
+    "electron": "31.3.0",
+    "electron-builder": "24.13.3",
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^16.4.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-css-order": "^2.1.2",
+    "typescript": "5.6.3"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "sqlite3": "5.1.7"
+  }
+}
