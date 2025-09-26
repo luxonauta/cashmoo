@@ -1,10 +1,12 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
-import prettier from "eslint-plugin-prettier";
-import globals from "globals";
-import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { FlatCompat } from "@eslint/eslintrc";
+import js from "@eslint/js";
+import { defineConfig, globalIgnores } from "eslint/config";
+import prettier from "eslint-plugin-prettier";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
+import globals from "globals";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,7 +25,8 @@ export default defineConfig([
       "plugin:prettier/recommended"
     ),
     plugins: {
-      prettier
+      prettier,
+      "simple-import-sort": simpleImportSort
     },
     languageOptions: {
       globals: {
@@ -31,8 +34,10 @@ export default defineConfig([
       }
     },
     rules: {
+      "no-empty": ["error", { allowEmptyCatch: true }],
       "prettier/prettier": "error",
-      "no-empty": ["error", { allowEmptyCatch: true }]
+      "simple-import-sort/exports": "error",
+      "simple-import-sort/imports": "error"
     }
   }
 ]);
