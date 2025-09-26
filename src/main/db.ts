@@ -71,10 +71,13 @@ export async function runMigrations(): Promise<void> {
     ? path.join(appPath, "migrations")
     : path.join(process.cwd(), "src/main/migrations");
   const files = (await fs.promises.readdir(migrationsDir))
-    .filter((f) => f.endsWith('.sql'))
+    .filter((f) => f.endsWith(".sql"))
     .sort();
   for (const f of files) {
-    const sql = await fs.promises.readFile(path.join(migrationsDir, f), 'utf-8');
+    const sql = await fs.promises.readFile(
+      path.join(migrationsDir, f),
+      "utf-8"
+    );
     await queryExec(sql);
   }
 }

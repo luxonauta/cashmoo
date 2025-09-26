@@ -1,7 +1,16 @@
 export function formatISODate(d: Date): string;
 export function formatISODate(y: number, m: number, day: number): string;
-export function formatISODate(y: number, m: number, day: number, _utc: boolean): string;
-export function formatISODate(arg1: Date | number, arg2?: number, arg3?: number): string {
+export function formatISODate(
+  y: number,
+  m: number,
+  day: number,
+  _utc: boolean
+): string;
+export function formatISODate(
+  arg1: Date | number,
+  arg2?: number,
+  arg3?: number
+): string {
   if (typeof arg1 === "number") {
     const y = arg1;
     const m = typeof arg2 === "number" ? arg2 : 1;
@@ -64,6 +73,7 @@ export function nextFromRecurrence(
   if (recurrence === "none") return start;
   if (recurrence === "weekly") return addDays(start, 7);
   if (recurrence === "biweekly") return addDays(start, 14);
-  if (recurrence === "monthly") return new Date(start.getFullYear(), start.getMonth() + 1, start.getDate());
+  if (recurrence === "monthly")
+    return new Date(start.getFullYear(), start.getMonth() + 1, start.getDate());
   return new Date(start.getFullYear() + 1, start.getMonth(), start.getDate());
 }

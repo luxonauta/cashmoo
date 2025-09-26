@@ -1,64 +1,54 @@
 import { useEffect, useState } from "react";
-import { apiListCards, apiListInvoices, apiPayInvoice } from "../api";
-import { CardRow, InvoiceRow } from "../types";
+import { apiListInvoices } from "../api";
+import { InvoiceRow } from "../types";
 
 export default function InvoicesView(): JSX.Element {
-  const [cards, setCards] = useState<CardRow[]>([]);
   const [invoices, setInvoices] = useState<InvoiceRow[]>([]);
   const [cardId, setCardId] = useState<string>("");
 
   useEffect(() => {
-    apiListCards().then(setCards);
-  }, []);
-
-  useEffect(() => {
-    apiListInvoices(cardId ? Number(cardId) : undefined).then(setInvoices);
+    const payload = cardId ? { cardId: Number(cardId) } : {};
+    apiListInvoices(payload).then(setInvoices);
   }, [cardId]);
-
-  function onPay(id: number): void {
-    apiPayInvoice(id).then((row: InvoiceRow) => {
-      setInvoices(invoices.map((r) => (r.id === row.id ? row : r)));
-    });
-  }
 
   return (
     <section>
       <h2>Invoices</h2>
 
-      <form>
-        <label htmlFor="card">Card</label>
-        <select id="card" value={cardId} onChange={(e) => setCardId(e.target.value)}>
-          <option value="">all</option>
-          {cards.map((c) => (
-            <option key={c.id} value={String(c.id)}>{c.name}</option>
-          ))}
-        </select>
-      </form>
+      <div>
+        <label htmlFor="card-filter">Filter by card</label>
+        <input
+          id="card-filter"
+          value={cardId}
+          onChange={(e) => setCardId(e.target.value)}
+          placeholder="Card ID"
+          type="number"
+          min={1}
+        />
+      </div>
 
       <table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Card</th>
             <th>Year</th>
             <th>Month</th>
             <th>Total</th>
             <th>Paid</th>
             <th>Paid at</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {invoices.map((r) => (
-            <tr key={r.id}>
-              <td>{r.cardId}</td>
-              <td>{r.year}</td>
-              <td>{r.month}</td>
-              <td>{r.total}</td>
-              <td>{r.paid ? "yes" : "no"}</td>
-              <td>{r.paidAt || ""}</td>
-              <td>
-                {!r.paid && <button onClick={() => onPay(r.id)}>Mark paid</button>}
-              </td>
+          {invoices.map((inv) => (
+            <tr key={inv.id}>
+              <td>{inv.id}</td>
+              <td>{inv.cardId}</td>
+              <td>{inv.year}</td>
+              <td>{inv.month}</td>
+              <td>{inv.total}</td>
+              <td>{inv.paid ? "yes" : "no"}</td>
+              <td>{inv.paidAt || "-"}</td>
             </tr>
           ))}
         </tbody>

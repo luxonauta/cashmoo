@@ -7,7 +7,13 @@ import CardsView from "./views/cards";
 import InvoicesView from "./views/invoices";
 import NotificationsView from "./views/notifications";
 import SetupInitialView from "./views/setup-initial";
-import { apiGetUser, apiListIncomes, apiListCards, apiListExpenses, apiSetUserName } from "./api";
+import {
+  apiGetUser,
+  apiListIncomes,
+  apiListCards,
+  apiListExpenses,
+  apiSetUserName
+} from "./api";
 import { UserProfile } from "./types";
 
 type Tab =
@@ -21,7 +27,11 @@ type Tab =
   | "invoices"
   | "notifications";
 
-function StartView({ onSave }: { onSave: (name: string) => void }): JSX.Element {
+function StartView({
+  onSave
+}: {
+  onSave: (name: string) => void;
+}): JSX.Element {
   const [name, setName] = useState<string>("");
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>): void {
@@ -68,7 +78,9 @@ export default function App(): JSX.Element {
 
   useEffect(() => {
     if (!user) return;
-    const named = Boolean(user.name && user.name.trim() && user.name.trim().toLowerCase() !== "user");
+    const named = Boolean(
+      user.name && user.name.trim() && user.name.trim().toLowerCase() !== "user"
+    );
     if (named) {
       setTab("dashboard");
     } else {
@@ -108,9 +120,15 @@ export default function App(): JSX.Element {
       )}
       {tab === "dashboard" && <DashboardView />}
       {tab === "settings" && <SettingsView />}
-      {tab === "incomes" && <IncomesView onFirstCreated={() => setTab("cards")} />}
-      {tab === "cards" && <CardsView onFirstCreated={() => setTab("expenses")} />}
-      {tab === "expenses" && <ExpensesView onFirstCreated={() => setTab("dashboard")} />}
+      {tab === "incomes" && (
+        <IncomesView onFirstCreated={() => setTab("cards")} />
+      )}
+      {tab === "cards" && (
+        <CardsView onFirstCreated={() => setTab("expenses")} />
+      )}
+      {tab === "expenses" && (
+        <ExpensesView onFirstCreated={() => setTab("dashboard")} />
+      )}
       {tab === "invoices" && <InvoicesView />}
       {tab === "notifications" && <NotificationsView />}
     </main>

@@ -23,13 +23,22 @@ export default function SettingsView(): JSX.Element {
       <h2>Profile</h2>
       <form onSubmit={onSubmit}>
         <label htmlFor="name">Name</label>
-        <input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+        <input
+          id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <button type="submit">Save</button>
       </form>
       <div>{user ? "Hello, " + user.name : ""}</div>
       <hr />
       <h2>Danger zone</h2>
-      <form onSubmit={(e) => { e.preventDefault(); apiClearAll().then(() => window.location.reload()); }}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          apiClearAll().then(() => window.location.reload());
+        }}
+      >
         <button type="submit">Clear all user data</button>
       </form>
     </section>

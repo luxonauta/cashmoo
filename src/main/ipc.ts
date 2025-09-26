@@ -110,6 +110,21 @@ export function registerIpc(): void {
     }
   );
 
+  ipcMain.handle(
+    "mark-expense-paid",
+    async (_e, payload: { expenseId: number; paidAt: string }) => {
+      await queryRun("UPDATE expenses SET paid_at=? WHERE id=?", [
+        payload.paidAt,
+        payload.expenseId
+      ]);
+      const row = await queryGet(
+        "SELECT id,name,description,amount,recurrence,auto_debit as autoDebit,due_day as dueDay,is_card as isCard,card_id as cardId,next_date as nextDate,active,paid_at as paidAt FROM expenses WHERE id=?",
+        [payload.expenseId]
+      );
+      return row;
+    }
+  );
+
   ipcMain.handle("list-cards", async () => {
     const rows = await queryAll(
       "SELECT id,name,closing_day as closingDay,due_day as dueDay,limit_amount as limitAmount FROM cards ORDER BY id DESC"
@@ -121,7 +136,12 @@ export function registerIpc(): void {
     "create-card",
     async (
       _e,
-      payload: { name: string; closingDay: number; dueDay: number; limitAmount: number }
+      payload: {
+        name: string;
+        closingDay: number;
+        dueDay: number;
+        limitAmount: number;
+      }
     ) => {
       const res = await queryRun(
         "INSERT INTO cards(name,closing_day,due_day,limit_amount) VALUES(?,?,?,?)",
@@ -135,47 +155,204 @@ export function registerIpc(): void {
     }
   );
 
-  ipcMain.handle("mark-expense-paid", async (_e, payload: { expenseId: number; paidAt: string }) => {
-    await queryRun("UPDATE expenses SET paid_at=? WHERE id=?", [payload.paidAt, payload.expenseId]);
-    const row = await queryGet(
-      "SELECT id,name,description,amount,recurrence,auto_debit as autoDebit,due_day as dueDay,is_card as isCard,card_id as cardId,next_date as nextDate,active,paid_at as paidAt FROM expenses WHERE id=?",
-      [payload.expenseId]
-    );
-    return row;
-  });
-
   ipcMain.handle("list-invoices", async (_e, payload: { cardId?: number }) => {
-    if (payload && payload.cardId) {
-      const rows = await queryAll(
-        "SELECT id,card_id as cardId,year,month,total,paid,paid_at as paidAt FROM invoices WHERE card_id=? ORDER BY year DESC, month DESC",
-        [payload.cardId]
-      );
-      return rows;
-    }
+    const where = payload.cardId ? "WHERE card_id=?" : "";
+    const args = payload.cardId ? [payload.cardId] : [];
     const rows = await queryAll(
-      "SELECT id,card_id as cardId,year,month,total,paid,paid_at as paidAt FROM invoices ORDER BY year DESC, month DESC"
+      `SELECT id,card_id as cardId,year,month,total_amount as total,paid,paid_at as paidAt FROM invoices ${where} ORDER BY year DESC,month DESC`,
+      args
     );
     return rows;
   });
 
   ipcMain.handle("pay-invoice", async (_e, payload: { invoiceId: number }) => {
-    const paidAt = formatISODate(new Date());
-    await queryRun("UPDATE invoices SET paid=1, paid_at=? WHERE id=?", [paidAt, payload.invoiceId]);
+    const now = new Date().toISOString().slice(0, 10);
+    await queryRun("UPDATE invoices SET paid=1,paid_at=? WHERE id=?", [
+      now,
+      payload.invoiceId
+    ]);
     const row = await queryGet(
-      "SELECT id,card_id as cardId,year,month,total,paid,paid_at as paidAt FROM invoices WHERE id=?",
+      "SELECT id,card_id as cardId,year,month,total_amount as total,paid,paid_at as paidAt FROM invoices WHERE id=?",
       [payload.invoiceId]
     );
     return row;
   });
 
-  ipcMain.handle("dashboard", async () => {
-    const totals = await queryGet<{ totalIncomes: number; totalExpenses: number; totalCardOpen: number }>(
-      "SELECT " +
-        "(SELECT IFNULL(SUM(amount),0) FROM incomes) as totalIncomes," +
-        "(SELECT IFNULL(SUM(amount),0) FROM expenses) as totalExpenses," +
-        "(SELECT IFNULL(SUM(total),0) FROM invoices WHERE paid=0) as totalCardOpen"
+  ipcMain.handle(
+    "update-income",
+    async (
+      _e,
+      payload: {
+        id: number;
+        name: string;
+        company: string | null;
+        amount: number;
+        recurrence: string;
+        endDate: string | null;
+      }
+    ) => {
+      const startRow = await queryGet<{ start_date: string }>(
+        "SELECT start_date FROM incomes WHERE id=?",
+        [payload.id]
+      );
+      let next = null;
+      if (payload.recurrence !== "none" && startRow && startRow.start_date) {
+        next = formatISODate(
+          nextFromRecurrence(
+            parseISODate(startRow.start_date),
+            payload.recurrence as any
+          )
+        );
+      }
+      await queryRun(
+        "UPDATE incomes SET name=?,company=?,amount=?,recurrence=?,end_date=?,next_date=? WHERE id=?",
+        [
+          payload.name,
+          payload.company,
+          payload.amount,
+          payload.recurrence,
+          payload.endDate,
+          next,
+          payload.id
+        ]
+      );
+      const row = await queryGet(
+        "SELECT id,name,company,amount,recurrence,start_date as startDate,end_date as endDate,next_date as nextDate,active FROM incomes WHERE id=?",
+        [payload.id]
+      );
+      return row;
+    }
+  );
+
+  ipcMain.handle("delete-income", async (_e, payload: { id: number }) => {
+    await queryRun(
+      "DELETE FROM notifications WHERE kind='income' AND ref_id=?",
+      [payload.id]
     );
-    return { ...totals, balance: totals.totalIncomes - totals.totalExpenses };
+    await queryRun("DELETE FROM incomes WHERE id=?", [payload.id]);
+    return true;
+  });
+
+  ipcMain.handle(
+    "update-expense",
+    async (
+      _e,
+      payload: {
+        id: number;
+        name: string;
+        description: string;
+        amount: number;
+        recurrence: string;
+        autoDebit: number;
+        dueDay: number;
+        isCard: number;
+        cardId: number | null;
+        firstDueDate?: string | null;
+      }
+    ) => {
+      const next = payload.firstDueDate || null;
+      await queryRun(
+        "UPDATE expenses SET name=?,description=?,amount=?,recurrence=?,auto_debit=?,due_day=?,is_card=?,card_id=?,next_date=? WHERE id=?",
+        [
+          payload.name,
+          payload.description,
+          payload.amount,
+          payload.recurrence,
+          payload.autoDebit,
+          payload.dueDay,
+          payload.isCard,
+          payload.cardId,
+          next,
+          payload.id
+        ]
+      );
+      const row = await queryGet(
+        "SELECT id,name,description,amount,recurrence,auto_debit as autoDebit,due_day as dueDay,is_card as isCard,card_id as cardId,next_date as nextDate,active,paid_at as paidAt FROM expenses WHERE id=?",
+        [payload.id]
+      );
+      return row;
+    }
+  );
+
+  ipcMain.handle("delete-expense", async (_e, payload: { id: number }) => {
+    await queryRun(
+      "DELETE FROM notifications WHERE kind='expense' AND ref_id=?",
+      [payload.id]
+    );
+    await queryRun("DELETE FROM expenses WHERE id=?", [payload.id]);
+    return true;
+  });
+
+  ipcMain.handle(
+    "update-card",
+    async (
+      _e,
+      payload: {
+        id: number;
+        name: string;
+        closingDay: number;
+        dueDay: number;
+        limitAmount: number;
+      }
+    ) => {
+      await queryRun(
+        "UPDATE cards SET name=?,closing_day=?,due_day=?,limit_amount=? WHERE id=?",
+        [
+          payload.name,
+          payload.closingDay,
+          payload.dueDay,
+          payload.limitAmount,
+          payload.id
+        ]
+      );
+      const row = await queryGet(
+        "SELECT id,name,closing_day as closingDay,due_day as dueDay,limit_amount as limitAmount FROM cards WHERE id=?",
+        [payload.id]
+      );
+      return row;
+    }
+  );
+
+  ipcMain.handle("delete-card", async (_e, payload: { id: number }) => {
+    const invIds = await queryAll<{ id: number }>(
+      "SELECT id FROM invoices WHERE card_id=?",
+      [payload.id]
+    );
+    for (const inv of invIds) {
+      await queryRun(
+        "DELETE FROM notifications WHERE kind='invoice' AND ref_id=?",
+        [inv.id]
+      );
+    }
+    await queryRun("DELETE FROM invoices WHERE card_id=?", [payload.id]);
+    await queryRun(
+      "UPDATE expenses SET is_card=0, card_id=NULL WHERE card_id=?",
+      [payload.id]
+    );
+    await queryRun("DELETE FROM cards WHERE id=?", [payload.id]);
+    return true;
+  });
+
+  ipcMain.handle("dashboard", async () => {
+    const totalIncomes = await queryGet<{ total: number }>(
+      "SELECT IFNULL(SUM(amount),0) as total FROM incomes WHERE active=1"
+    );
+    const totalExpenses = await queryGet<{ total: number }>(
+      "SELECT IFNULL(SUM(amount),0) as total FROM expenses WHERE active=1"
+    );
+    const totalCardOpen = await queryGet<{ total: number }>(
+      "SELECT IFNULL(SUM(total_amount),0) as total FROM invoices WHERE paid=0"
+    );
+    const balance =
+      (totalIncomes?.total || 0) -
+      (totalExpenses?.total || 0) -
+      (totalCardOpen?.total || 0);
+    return {
+      totalIncomes: totalIncomes?.total || 0,
+      totalExpenses: totalExpenses?.total || 0,
+      totalCardOpen: totalCardOpen?.total || 0,
+      balance
+    };
   });
 
   ipcMain.handle("notifications", async () => {

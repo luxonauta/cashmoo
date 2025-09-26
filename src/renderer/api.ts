@@ -32,14 +32,52 @@ type FinanceApi = {
     cardId: number | null;
     firstDueDate: string;
   }) => Promise<ExpenseRow>;
-  markExpensePaid: (payload: { expenseId: number; paidAt: string }) => Promise<ExpenseRow>;
+  markExpensePaid: (payload: {
+    expenseId: number;
+    paidAt: string;
+  }) => Promise<ExpenseRow>;
   listCards: () => Promise<CardRow[]>;
-  createCard: (payload: { name: string; closingDay: number; dueDay: number; limitAmount: number }) => Promise<CardRow>;
+  createCard: (payload: {
+    name: string;
+    closingDay: number;
+    dueDay: number;
+    limitAmount: number;
+  }) => Promise<CardRow>;
   listInvoices: (payload: { cardId?: number }) => Promise<InvoiceRow[]>;
   payInvoice: (payload: { invoiceId: number }) => Promise<InvoiceRow>;
   dashboard: () => Promise<DashboardData>;
   notifications: () => Promise<NotificationRow[]>;
   clearAll: () => Promise<boolean>;
+  updateIncome: (payload: {
+    id: number;
+    name: string;
+    company: string | null;
+    amount: number;
+    recurrence: string;
+    endDate: string | null;
+  }) => Promise<IncomeRow>;
+  deleteIncome: (payload: { id: number }) => Promise<boolean>;
+  updateExpense: (payload: {
+    id: number;
+    name: string;
+    description: string;
+    amount: number;
+    recurrence: string;
+    autoDebit: number;
+    dueDay: number;
+    isCard: number;
+    cardId: number | null;
+    firstDueDate?: string | null;
+  }) => Promise<ExpenseRow>;
+  deleteExpense: (payload: { id: number }) => Promise<boolean>;
+  updateCard: (payload: {
+    id: number;
+    name: string;
+    closingDay: number;
+    dueDay: number;
+    limitAmount: number;
+  }) => Promise<CardRow>;
+  deleteCard: (payload: { id: number }) => Promise<boolean>;
 };
 
 declare global {
@@ -89,11 +127,11 @@ export function apiCreateExpense(payload: {
   return window.financeApi.createExpense(payload);
 }
 
-export function apiMarkExpensePaid(
-  expenseId: number,
-  paidAt: string
-): Promise<ExpenseRow> {
-  return window.financeApi.markExpensePaid({ expenseId, paidAt });
+export function apiMarkExpensePaid(payload: {
+  expenseId: number;
+  paidAt: string;
+}): Promise<ExpenseRow> {
+  return window.financeApi.markExpensePaid(payload);
 }
 
 export function apiListCards(): Promise<CardRow[]> {
@@ -109,8 +147,10 @@ export function apiCreateCard(payload: {
   return window.financeApi.createCard(payload);
 }
 
-export function apiListInvoices(cardId?: number): Promise<InvoiceRow[]> {
-  return window.financeApi.listInvoices({ cardId });
+export function apiListInvoices(payload: {
+  cardId?: number;
+}): Promise<InvoiceRow[]> {
+  return window.financeApi.listInvoices(payload);
 }
 
 export function apiPayInvoice(invoiceId: number): Promise<InvoiceRow> {
@@ -127,4 +167,52 @@ export function apiNotifications(): Promise<NotificationRow[]> {
 
 export function apiClearAll(): Promise<boolean> {
   return window.financeApi.clearAll();
+}
+
+export function apiUpdateIncome(payload: {
+  id: number;
+  name: string;
+  company: string | null;
+  amount: number;
+  recurrence: string;
+  endDate: string | null;
+}): Promise<IncomeRow> {
+  return window.financeApi.updateIncome(payload);
+}
+
+export function apiDeleteIncome(id: number): Promise<boolean> {
+  return window.financeApi.deleteIncome({ id });
+}
+
+export function apiUpdateExpense(payload: {
+  id: number;
+  name: string;
+  description: string;
+  amount: number;
+  recurrence: string;
+  autoDebit: number;
+  dueDay: number;
+  isCard: number;
+  cardId: number | null;
+  firstDueDate?: string | null;
+}): Promise<ExpenseRow> {
+  return window.financeApi.updateExpense(payload);
+}
+
+export function apiDeleteExpense(id: number): Promise<boolean> {
+  return window.financeApi.deleteExpense({ id });
+}
+
+export function apiUpdateCard(payload: {
+  id: number;
+  name: string;
+  closingDay: number;
+  dueDay: number;
+  limitAmount: number;
+}): Promise<CardRow> {
+  return window.financeApi.updateCard(payload);
+}
+
+export function apiDeleteCard(id: number): Promise<boolean> {
+  return window.financeApi.deleteCard({ id });
 }
