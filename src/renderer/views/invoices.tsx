@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import GreetingBanner from "../components/greeting-banner";
 import { apiListInvoices } from "../api";
 import { InvoiceRow } from "../types";
 
@@ -13,24 +14,22 @@ export default function InvoicesView(): JSX.Element {
 
   return (
     <section>
+      <GreetingBanner page="invoices" />
       <h2>Invoices</h2>
 
-      <div>
-        <label htmlFor="card-filter">Filter by card</label>
-        <input
-          id="card-filter"
-          value={cardId}
-          onChange={(e) => setCardId(e.target.value)}
-          placeholder="Card ID"
-          type="number"
-          min={1}
-        />
-      </div>
+      <label htmlFor="ifilter">Filter by card</label>
+      <input
+        id="ifilter"
+        inputMode="numeric"
+        placeholder="Card id (optional)"
+        value={cardId}
+        onChange={(e) => setCardId(e.target.value)}
+      />
 
       <table>
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Invoice</th>
             <th>Card</th>
             <th>Year</th>
             <th>Month</th>

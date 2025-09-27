@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import GreetingBanner from "../components/greeting-banner";
 import IncomesView from "./incomes";
 import CardsView from "./cards";
 import ExpensesView from "./expenses";
@@ -14,22 +15,17 @@ export default function SetupInitialView({
   const [expenseCount, setExpenseCount] = useState<number>(0);
 
   useEffect(() => {
-    void apiListIncomes().then((rows) => setIncomeCount(rows.length));
-    void apiListCards().then((rows) => setCardCount(rows.length));
-    void apiListExpenses().then((rows) => setExpenseCount(rows.length));
+    apiListIncomes().then((rows) => setIncomeCount(rows.length));
+    apiListCards().then((rows) => setCardCount(rows.length));
+    apiListExpenses().then((rows) => setExpenseCount(rows.length));
   }, []);
 
   const hasAtLeastOne = incomeCount + cardCount + expenseCount > 0;
 
   return (
-    <section aria-labelledby="setup-title">
-      <header>
-        <h2 id="setup-title">Initial Setup</h2>
-        <p>
-          Register at least one item before continuing. You can add as many as
-          you like.
-        </p>
-      </header>
+    <section>
+      <GreetingBanner page="setup" />
+      <h2>Initial setup</h2>
 
       <IncomesView
         onFirstCreated={() => {

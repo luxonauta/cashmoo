@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import GreetingBanner from "../components/greeting-banner";
 import {
   apiCreateIncome,
   apiListIncomes,
@@ -48,6 +49,12 @@ export default function IncomesView({
       const before = rows.length;
       setRows([row, ...rows]);
       if (before === 0 && onFirstCreated) onFirstCreated();
+      setName("");
+      setCompany("");
+      setAmount("");
+      setRecurrence("none");
+      setStartDate("");
+      setEndDate("");
     });
   }
 
@@ -86,18 +93,24 @@ export default function IncomesView({
 
   return (
     <section>
+      <GreetingBanner page="incomes" />
       <h2>Incomes</h2>
       <form onSubmit={onSubmit}>
         <label htmlFor="iname">Name</label>
         <input
           id="iname"
+          placeholder="e.g., Salary"
+          title="Income name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
         />
 
         <label htmlFor="icompany">Company</label>
         <input
           id="icompany"
+          placeholder="e.g., ACME Corp"
+          title="Company or source"
           value={company}
           onChange={(e) => setCompany(e.target.value)}
         />
@@ -105,15 +118,18 @@ export default function IncomesView({
         <label htmlFor="iamount">Amount</label>
         <input
           id="iamount"
+          inputMode="decimal"
+          placeholder="e.g., 1999.90"
+          title="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          type="number"
-          step="0.01"
+          required
         />
 
-        <label htmlFor="irec">Recurrence</label>
+        <label htmlFor="irecurrence">Recurrence</label>
         <select
-          id="irec"
+          id="irecurrence"
+          title="How often does this income happen?"
           value={recurrence}
           onChange={(e) => setRecurrence(e.target.value as Recurrence)}
         >
@@ -127,22 +143,24 @@ export default function IncomesView({
         <label htmlFor="istart">Start year</label>
         <input
           id="istart"
+          placeholder="YYYY"
+          title="Start year"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          type="number"
-          min="1900"
-          max="2100"
         />
 
         <label htmlFor="iend">End date</label>
         <input
           id="iend"
+          placeholder="YYYY-MM-DD"
+          title="End date (optional)"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          type="date"
         />
 
-        <button type="submit">Add</button>
+        <button type="submit" title="Add a new income">
+          Create income
+        </button>
       </form>
 
       <table>
@@ -182,10 +200,9 @@ export default function IncomesView({
               <td>
                 {editingId === r.id ? (
                   <input
+                    inputMode="decimal"
                     value={eAmount}
                     onChange={(e) => setEAmount(e.target.value)}
-                    type="number"
-                    step="0.01"
                   />
                 ) : (
                   r.amount
@@ -213,13 +230,24 @@ export default function IncomesView({
               <td>
                 {editingId === r.id ? (
                   <>
-                    <button onClick={() => onEditSave(r.id)}>Save</button>
-                    <button onClick={onEditCancel}>Cancel</button>
+                    <button
+                      onClick={() => onEditSave(r.id)}
+                      title="Save changes"
+                    >
+                      Save
+                    </button>
+                    <button onClick={onEditCancel} title="Cancel editing">
+                      Cancel
+                    </button>
                   </>
                 ) : (
                   <>
-                    <button onClick={() => onEditStart(r)}>✏️</button>
-                    <button onClick={() => onDelete(r.id)}>🗑️</button>
+                    <button onClick={() => onEditStart(r)} title="Edit">
+                      ✏️
+                    </button>
+                    <button onClick={() => onDelete(r.id)} title="Delete">
+                      🗑️
+                    </button>
                   </>
                 )}
               </td>

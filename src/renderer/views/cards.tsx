@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import GreetingBanner from "../components/greeting-banner";
 import {
   apiCreateCard,
   apiListCards,
@@ -15,7 +16,7 @@ export default function CardsView({
   const [rows, setRows] = useState<CardRow[]>([]);
   const [name, setName] = useState<string>("");
   const [closingDay, setClosingDay] = useState<string>("1");
-  const [dueDay, setDueDay] = useState<string>("");
+  const [dueDay, setDueDay] = useState<string>("1");
   const [limitAmount, setLimitAmount] = useState<string>("0");
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -44,6 +45,10 @@ export default function CardsView({
       const before = rows.length;
       setRows([row, ...rows]);
       if (before === 0 && onFirstCreated) onFirstCreated();
+      setName("");
+      setClosingDay("1");
+      setDueDay("1");
+      setLimitAmount("0");
     });
   }
 
@@ -74,47 +79,53 @@ export default function CardsView({
     });
   }
 
-  function onEditCancel(): void {
-    setEditingId(null);
-  }
-
   return (
     <section>
+      <GreetingBanner page="cards" />
       <h2>Cards</h2>
       <form onSubmit={onSubmit}>
         <label htmlFor="cname">Name</label>
         <input
           id="cname"
+          placeholder="e.g., Visa Gold"
+          title="Card label"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
         />
 
         <label htmlFor="cclosing">Closing day</label>
         <input
           id="cclosing"
+          inputMode="numeric"
+          placeholder="1 to 31"
           value={closingDay}
           onChange={(e) => setClosingDay(e.target.value)}
-          type="number"
         />
 
         <label htmlFor="cdue">Due day</label>
         <input
           id="cdue"
+          inputMode="numeric"
+          placeholder="auto if blank"
           value={dueDay}
           onChange={(e) => setDueDay(e.target.value)}
-          type="number"
         />
 
-        <label htmlFor="climit">Limit</label>
+        <label htmlFor="climit">Limit amount</label>
         <input
           id="climit"
+          inputMode="decimal"
+          placeholder="e.g., 5000"
+          title="Credit limit"
           value={limitAmount}
           onChange={(e) => setLimitAmount(e.target.value)}
-          type="number"
-          step="0.01"
+          required
         />
 
-        <button type="submit">Add</button>
+        <button type="submit" title="Add a new card">
+          Create card
+        </button>
       </form>
 
       <table>
@@ -143,9 +154,9 @@ export default function CardsView({
               <td>
                 {editingId === r.id ? (
                   <input
+                    inputMode="numeric"
                     value={eClosingDay}
                     onChange={(e) => setEClosingDay(e.target.value)}
-                    type="number"
                   />
                 ) : (
                   r.closingDay
@@ -154,9 +165,9 @@ export default function CardsView({
               <td>
                 {editingId === r.id ? (
                   <input
+                    inputMode="numeric"
                     value={eDueDay}
                     onChange={(e) => setEDueDay(e.target.value)}
-                    type="number"
                   />
                 ) : (
                   r.dueDay
@@ -165,10 +176,9 @@ export default function CardsView({
               <td>
                 {editingId === r.id ? (
                   <input
+                    inputMode="decimal"
                     value={eLimitAmount}
                     onChange={(e) => setELimitAmount(e.target.value)}
-                    type="number"
-                    step="0.01"
                   />
                 ) : (
                   r.limitAmount
@@ -177,13 +187,27 @@ export default function CardsView({
               <td>
                 {editingId === r.id ? (
                   <>
-                    <button onClick={() => onEditSave(r.id)}>Save</button>
-                    <button onClick={onEditCancel}>Cancel</button>
+                    <button
+                      onClick={() => onEditSave(r.id)}
+                      title="Save changes"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      title="Cancel editing"
+                    >
+                      Cancel
+                    </button>
                   </>
                 ) : (
                   <>
-                    <button onClick={() => onEditStart(r)}>✏️</button>
-                    <button onClick={() => onDelete(r.id)}>🗑️</button>
+                    <button onClick={() => onEditStart(r)} title="Edit">
+                      ✏️
+                    </button>
+                    <button onClick={() => onDelete(r.id)} title="Delete">
+                      🗑️
+                    </button>
                   </>
                 )}
               </td>

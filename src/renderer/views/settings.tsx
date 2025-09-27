@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import GreetingBanner from "../components/greeting-banner";
 import { apiGetUser, apiSetUserName, apiClearAll } from "../api";
 import { UserProfile } from "../types";
 
@@ -20,16 +21,23 @@ export default function SettingsView(): JSX.Element {
 
   return (
     <section>
-      <h2>Profile</h2>
+      <GreetingBanner page="settings" />
+      <h2>Settings</h2>
       <form onSubmit={onSubmit}>
-        <label htmlFor="name">Name</label>
+        <label htmlFor="sname">Your name</label>
         <input
-          id="name"
+          id="sname"
+          placeholder="e.g., Alex"
+          title="Your display name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
         />
-        <button type="submit">Save</button>
+        <button type="submit" title="Save your profile">
+          Save
+        </button>
       </form>
+
       <div>{user ? "Hello, " + user.name : ""}</div>
       <hr />
       <h2>Danger zone</h2>
