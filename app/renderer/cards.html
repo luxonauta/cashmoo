@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CashMoo Cards</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+  </head>
+
+  <body>
+    <h1>Cards</h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="incomes.html">Incomes</a>
+      <a href="cards.html">Cards</a>
+      <a href="goals.html">Goals</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+    <form id="cardForm">
+      <div>
+        <label>Name</label>
+        <input id="cardName" type="text" maxlength="30" required placeholder="Name" />
+      </div>
+      <div>
+        <label>Description</label>
+        <input id="cardDescription" type="text" maxlength="100" placeholder="Description" />
+      </div>
+      <div>
+        <label>Limit</label>
+        <input id="cardLimit" type="text" inputmode="decimal" required placeholder="0.00" />
+      </div>
+      <div>
+        <label>Closing day</label>
+        <input id="cardClosingDay" type="number" min="1" max="31" required placeholder="1" />
+      </div>
+      <div>
+        <label>Payment day</label>
+        <input id="cardPaymentDay" type="number" min="1" max="31" required placeholder="10" />
+      </div>
+      <div id="cardError" style="color: red"></div>
+      <button id="cardSubmit" type="submit">Add card</button>
+    </form>
+    <h2>List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Limit</th>
+          <th>Closing</th>
+          <th>Payment</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="cardsBody"></tbody>
+    </table>
+    <script src="renderer.js"></script>
+  </body>
+</html>

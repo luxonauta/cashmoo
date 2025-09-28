@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CashMoo Setup</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+  </head>
+
+  <body>
+    <h1>Welcome to CashMoo</h1>
+    <p>Complete the setup to start using the app.</p>
+    <form id="setupForm">
+      <div>
+        <label>User name</label>
+        <input id="setupUserName" type="text" maxlength="30" required placeholder="Your name" />
+      </div>
+      <div>
+        <label>Default currency</label>
+        <select id="setupCurrency" required></select>
+      </div>
+      <div>
+        <label>Date format</label>
+        <select id="setupDateFormat" required></select>
+      </div>
+      <div>
+        <label>Enable notifications</label>
+        <input id="setupNotifications" type="checkbox" checked />
+      </div>
+      <div id="setupError" style="color: red"></div>
+      <button type="submit">Continue</button>
+    </form>
+    <script src="renderer.js"></script>
+  </body>
+</html>

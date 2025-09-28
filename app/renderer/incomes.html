@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CashMoo Incomes</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+  </head>
+
+  <body>
+    <h1>Incomes</h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="incomes.html">Incomes</a>
+      <a href="cards.html">Cards</a>
+      <a href="goals.html">Goals</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+    <form id="incomeForm">
+      <div>
+        <label>Name</label>
+        <input id="incomeName" type="text" maxlength="50" required placeholder="Name" />
+      </div>
+      <div>
+        <label>Description</label>
+        <input id="incomeDescription" type="text" maxlength="200" placeholder="Description" />
+      </div>
+      <div>
+        <label>Company</label>
+        <input id="incomeCompany" type="text" maxlength="50" placeholder="Company" />
+      </div>
+      <div>
+        <label>Amount</label>
+        <input id="incomeAmount" type="text" inputmode="decimal" required placeholder="0.00" />
+      </div>
+      <div>
+        <label>Recurrence</label>
+        <select id="incomeRecurrence" required></select>
+      </div>
+      <div id="incomeReceiveDateWrap" style="display: none">
+        <label>Receive date</label>
+        <input id="incomeReceiveDate" type="date" />
+      </div>
+      <div id="incomeWeeklyWrap" style="display: none">
+        <label>Day of week</label>
+        <select id="incomeWeekday"></select>
+      </div>
+      <div id="incomeMonthlyWrap" style="display: none">
+        <label>Day of month</label>
+        <input id="incomeDay" type="number" min="1" max="30" placeholder="1" />
+      </div>
+      <div id="incomeAnnualWrap" style="display: none">
+        <label>Month</label>
+        <select id="incomeMonth"></select>
+        <label>Day</label>
+        <input id="incomeDayAnnual" type="number" min="1" max="30" placeholder="1" />
+      </div>
+      <div id="incomeError" style="color: red"></div>
+      <button id="incomeSubmit" type="submit">Add income</button>
+    </form>
+    <h2>List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Recurrence</th>
+          <th>Schedule</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="incomesBody"></tbody>
+    </table>
+    <script src="renderer.js"></script>
+  </body>
+</html>

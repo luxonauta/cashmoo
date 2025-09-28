@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CashMoo Goals</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+  </head>
+
+  <body>
+    <h1>Goals</h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="incomes.html">Incomes</a>
+      <a href="cards.html">Cards</a>
+      <a href="goals.html">Goals</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+    <form id="goalForm">
+      <div>
+        <label>Title</label>
+        <input id="goalTitle" type="text" maxlength="50" required placeholder="Title" />
+      </div>
+      <div>
+        <label>Target</label>
+        <input id="goalTarget" type="text" inputmode="decimal" required placeholder="0.00" />
+      </div>
+      <div>
+        <label>Period</label>
+        <select id="goalPeriod" required>
+          <option value="monthly">Monthly</option>
+          <option value="annual">Annual</option>
+        </select>
+      </div>
+      <div id="goalError" style="color: red"></div>
+      <button type="submit">Add goal</button>
+    </form>
+    <h2>List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Target</th>
+          <th>Period</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="goalsBody"></tbody>
+    </table>
+    <script src="renderer.js"></script>
+  </body>
+</html>

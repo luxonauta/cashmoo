@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CashMoo Expenses</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+  </head>
+
+  <body>
+    <h1>Expenses</h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="incomes.html">Incomes</a>
+      <a href="cards.html">Cards</a>
+      <a href="goals.html">Goals</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+    <form id="expenseForm">
+      <div>
+        <label>Name</label>
+        <input id="expenseName" type="text" maxlength="50" required placeholder="Name" />
+      </div>
+      <div>
+        <label>Description</label>
+        <input id="expenseDescription" type="text" maxlength="200" placeholder="Description" />
+      </div>
+      <div>
+        <label>Amount</label>
+        <input id="expenseAmount" type="text" inputmode="decimal" required placeholder="0.00" />
+      </div>
+      <div>
+        <label>Recurrence</label>
+        <select id="expenseRecurrence" required></select>
+      </div>
+      <div id="expenseDueDateWrap" style="display: none">
+        <label>Due date</label>
+        <input id="expenseDueDate" type="date" />
+      </div>
+      <div id="expenseWeeklyWrap" style="display: none">
+        <label>Day of week</label>
+        <select id="expenseWeekday"></select>
+      </div>
+      <div id="expenseMonthlyWrap" style="display: none">
+        <label>Day of month</label>
+        <input id="expenseDay" type="number" min="1" max="30" placeholder="1" />
+      </div>
+      <div id="expenseAnnualWrap" style="display: none">
+        <label>Month</label>
+        <select id="expenseMonth"></select>
+        <label>Day</label>
+        <input id="expenseDayAnnual" type="number" min="1" max="30" placeholder="1" />
+      </div>
+      <div>
+        <label>Payment method</label>
+        <select id="expensePayment" required>
+          <option value="auto-debit">Auto debit</option>
+          <option value="manual">Manual</option>
+          <option value="card">Card</option>
+        </select>
+      </div>
+      <div id="expenseCardWrap" style="display: none">
+        <label>Card</label>
+        <select id="expenseCard"></select>
+      </div>
+      <div id="expenseError" style="color: red"></div>
+      <button id="expenseSubmit" type="submit">Add expense</button>
+    </form>
+    <h2>List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Recurrence</th>
+          <th>Payment</th>
+          <th>Due date</th>
+          <th>Card</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="expensesBody"></tbody>
+    </table>
+    <script src="renderer.js"></script>
+  </body>
+</html>

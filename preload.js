@@ -1,0 +1,31 @@
+import { contextBridge, ipcRenderer } from "electron";
+
+contextBridge.exposeInMainWorld("cashmoo", {
+  setupSave: (payload) => ipcRenderer.invoke("setup:save", payload),
+  navReady: () => ipcRenderer.invoke("nav:ready"),
+  dashboardSummary: () => ipcRenderer.invoke("dashboard:summary"),
+  listExpenses: () => ipcRenderer.invoke("expenses:list"),
+  addExpense: (payload) => ipcRenderer.invoke("expenses:add", payload),
+  updateExpense: (payload) => ipcRenderer.invoke("expenses:update", payload),
+  removeExpense: (payload) => ipcRenderer.invoke("expenses:remove", payload),
+  setExpenseStatus: (payload) => ipcRenderer.invoke("expenses:update-status", payload),
+  listIncomes: () => ipcRenderer.invoke("incomes:list"),
+  addIncome: (payload) => ipcRenderer.invoke("incomes:add", payload),
+  updateIncome: (payload) => ipcRenderer.invoke("incomes:update", payload),
+  removeIncome: (payload) => ipcRenderer.invoke("incomes:remove", payload),
+  setIncomeStatus: (payload) => ipcRenderer.invoke("incomes:update-status", payload),
+  listCards: () => ipcRenderer.invoke("cards:list"),
+  addCard: (payload) => ipcRenderer.invoke("cards:add", payload),
+  updateCard: (payload) => ipcRenderer.invoke("cards:update", payload),
+  removeCard: (payload) => ipcRenderer.invoke("cards:remove", payload),
+  listGoals: () => ipcRenderer.invoke("goals:list"),
+  addGoal: (payload) => ipcRenderer.invoke("goals:add", payload),
+  removeGoal: (payload) => ipcRenderer.invoke("goals:remove", payload),
+  getNotifications: () => ipcRenderer.invoke("notifications:get"),
+  updateNotifications: (payload) => ipcRenderer.invoke("notifications:update", payload),
+  getSettings: () => ipcRenderer.invoke("settings:get"),
+  updateSettings: (payload) => ipcRenderer.invoke("settings:update", payload),
+  exportData: () => ipcRenderer.invoke("data:export"),
+  importData: () => ipcRenderer.invoke("data:import"),
+  resetApp: () => ipcRenderer.invoke("data:reset")
+});

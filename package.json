@@ -1,36 +1,24 @@
 {
   "name": "cashmoo",
   "version": "1.0.0",
-  "private": true,
-  "main": "dist/main/main.js",
-  "type": "commonjs",
+  "description": "CashMoo personal finance control",
+  "main": "main.js",
+  "author": "CashMoo",
+  "license": "MIT",
+  "type": "module",
   "scripts": {
-    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
-    "build": "tsc",
     "start": "electron .",
-    "dev": "tsc -w",
     "lint": "eslint . --fix && prettier . --write"
-  },
-  "dependencies": {
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "sqlite3": "5.1.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.36.0",
-    "@types/node": "22.7.5",
-    "@types/react": "18.3.5",
-    "@types/react-dom": "18.3.0",
-    "electron": "^38.1.2",
-    "electron-builder": "24.13.3",
-    "eslint": "^9.36.0",
+    "electron": "^38.2.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint": "^9.36.0",
     "globals": "^16.4.0",
-    "prettier": "^3.6.2",
     "prettier-plugin-css-order": "^2.1.2",
-    "typescript": "5.6.3"
+    "prettier": "^3.6.2"
   }
 }

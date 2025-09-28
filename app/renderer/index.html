@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CashMoo Dashboard</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+  </head>
+
+  <body>
+    <h1>CashMoo</h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="incomes.html">Incomes</a>
+      <a href="cards.html">Cards</a>
+      <a href="goals.html">Goals</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+    <section id="tutorial" style="display: none">
+      <h2>Getting started</h2>
+      <ol>
+        <li>Add your first income</li>
+        <li>Add your first expense</li>
+        <li>Add your card</li>
+        <li>Set a financial goal</li>
+        <li>Enable notifications</li>
+      </ol>
+    </section>
+    <section id="dashboard" style="display: none">
+      <h2>Balance</h2>
+      <div id="dashboardBalance">0.00</div>
+      <h2>Monthly projection</h2>
+      <div id="dashboardProjection">0.00</div>
+      <h2>Spending distribution</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="dashboardDistributionBody"></tbody>
+      </table>
+      <h2>Health indicators</h2>
+      <div>Saving rate: <span id="healthSavingRate">0%</span></div>
+      <div>Card usage: <span id="healthCreditUse">0%</span></div>
+      <div>Net balance: <span id="healthNetBalance">0.00</span></div>
+      <h2>Cards status</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Card</th>
+            <th>Limit</th>
+            <th>Used</th>
+            <th>Available</th>
+          </tr>
+        </thead>
+        <tbody id="cardsUsageBody"></tbody>
+      </table>
+      <h2>Suggestions</h2>
+      <ul id="suggestionsList"></ul>
+    </section>
+    <script src="renderer.js"></script>
+  </body>
+</html>

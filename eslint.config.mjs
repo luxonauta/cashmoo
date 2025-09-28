@@ -5,7 +5,6 @@ import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import { defineConfig, globalIgnores } from "eslint/config";
 import prettier from "eslint-plugin-prettier";
-import simpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,26 +17,21 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-  globalIgnores(["**/node_modules/", "**/dist/", "**/build/"]),
+  globalIgnores(["**/node_modules/", "**/dist/"]),
   {
-    extends: compat.extends(
-      "eslint:recommended",
-      "plugin:prettier/recommended"
-    ),
+    extends: compat.extends("eslint:recommended", "plugin:prettier/recommended"),
     plugins: {
-      prettier,
-      "simple-import-sort": simpleImportSort
+      prettier
     },
     languageOptions: {
       globals: {
-        ...globals.browser
+        ...globals.browser,
+        ...globals.node
       }
     },
     rules: {
       "no-empty": ["error", { allowEmptyCatch: true }],
-      "prettier/prettier": "error",
-      "simple-import-sort/exports": "error",
-      "simple-import-sort/imports": "error"
+      "prettier/prettier": "error"
     }
   }
 ]);

@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CashMoo Notifications</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+  </head>
+
+  <body>
+    <h1>Notifications</h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="incomes.html">Incomes</a>
+      <a href="cards.html">Cards</a>
+      <a href="goals.html">Goals</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+    <form id="notificationsForm">
+      <div>
+        <label>Enable notifications</label>
+        <input id="notificationsEnabled" type="checkbox" />
+      </div>
+      <div>
+        <label>Alerts for due bills</label>
+        <input id="alertsDue" type="checkbox" />
+      </div>
+      <div>
+        <label>Alerts for goals</label>
+        <input id="alertsGoals" type="checkbox" />
+      </div>
+      <div>Alert days: 7</div>
+      <div id="notificationsError" style="color: red"></div>
+      <button type="submit">Save</button>
+    </form>
+    <script src="renderer.js"></script>
+  </body>
+</html>
