@@ -16,7 +16,11 @@
     "start:debug": "electron . --enable-logging --inspect --remote-debugging-port=9222",
     "start:windows": "set NODE_ENV=production && electron .",
     "lint": "eslint . --fix && prettier . --write",
-    "clean": "npx rimraf node_modules package-lock.json"
+    "clean": "npx rimraf node_modules package-lock.json",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
   },
   "dependencies": {
     "electron": "^38.2.0"
@@ -24,6 +28,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.36.0",
+    "electron-builder": "^25.0.5",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -32,20 +37,6 @@
     "prettier-plugin-css-order": "^2.1.2"
   },
   "electronVersion": "38.2.0",
-  "config": {
-    "windows": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
-    },
-    "mac": {
-      "target": "dmg",
-      "icon": "assets/icon.icns"
-    },
-    "linux": {
-      "target": "AppImage",
-      "icon": "assets/icon.png"
-    }
-  },
   "build": {
     "appId": "com.cashmoo.app",
     "productName": "CashMoo",
@@ -57,7 +48,17 @@
       "main.js",
       "preload.js",
       "app/**/*",
-      "package.json"
+      "package.json",
+      "assets/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "assets/",
+        "to": "assets/",
+        "filter": [
+          "**/*"
+        ]
+      }
     ],
     "win": {
       "target": "nsis",
@@ -67,7 +68,8 @@
     "mac": {
       "target": "dmg",
       "icon": "assets/icon.icns",
-      "category": "public.app-category.finance"
+      "category": "public.app-category.finance",
+      "bundleVersion": "1.0.0"
     },
     "linux": {
       "target": "AppImage",
@@ -79,6 +81,10 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
+    },
+    "dmg": {
+      "title": "CashMoo Installer",
+      "icon": "assets/icon.icns"
     }
   }
 }

@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, dialog, Notification } from "electron";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import { ensureDataFiles, readData, writeData, exportData as exportDataFile, importData as importDataFile, resetData, tryRecoverFromBackup, ensureWeeklyBackup } from "./app/helpers/storage.js";
 import { validateExpense, validateIncome, validateCard, validateSetup, validateGoal, validateNotificationSettings, parseMoney, validateCardClosingPayment } from "./app/helpers/validation.js";
@@ -12,10 +13,36 @@ let mainWindow = null;
 let notificationTimer = null;
 
 /**
- * Creates the main application window with Windows-specific configurations
+ * Gets the appropriate icon path for the current platform
+ * @returns {string|null} Path to the platform-specific icon file, or null if not found
+ */
+const getIconPath = () => {
+  const assetsDir = path.join(__dirname, "assets");
+
+  // Use PNG for all platforms to avoid .icns issues
+  const iconPath = path.join(assetsDir, "icon.png");
+
+  // Check if icon file exists
+  try {
+    if (fs.existsSync(iconPath)) {
+      return iconPath;
+    } else {
+      console.warn(`Icon file not found: ${iconPath}`);
+      return null;
+    }
+  } catch (error) {
+    console.warn(`Error checking icon file: ${error.message}`);
+    return null;
+  }
+};
+
+/**
+ * Creates the main application window with platform-specific configurations
  */
 const createWindow = () => {
-  mainWindow = new BrowserWindow({
+  const iconPath = getIconPath();
+
+  const windowConfig = {
     width: 768,
     height: 600,
     webPreferences: {
@@ -27,11 +54,31 @@ const createWindow = () => {
     title: "CashMoo",
     show: false,
     autoHideMenuBar: true,
-    icon: process.platform === "win32" ? path.join(__dirname, "icon.ico") : undefined
-  });
+    titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "default"
+  };
+
+  // Add icon if file exists (now using PNG for all platforms)
+  if (iconPath) {
+    windowConfig.icon = iconPath;
+    console.log(`Using icon: ${iconPath}`);
+  } else {
+    console.log("No icon file found, proceeding without icon");
+  }
+
+  mainWindow = new BrowserWindow(windowConfig);
 
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
+
+    // Set dock icon for macOS if icon exists
+    if (process.platform === "darwin" && iconPath && app.dock) {
+      try {
+        app.dock.setIcon(iconPath);
+        console.log("Dock icon set successfully");
+      } catch (error) {
+        console.warn(`Failed to set dock icon: ${error.message}`);
+      }
+    }
   });
 
   mainWindow.webContents.on("did-fail-load", (event, errorCode, errorDescription) => {
@@ -106,7 +153,7 @@ const startNotificationLoop = () => {
 };
 
 /**
- * Shows a basic system notification with Windows compatibility check
+ * Shows a basic system notification with platform compatibility check
  * @param {string} title - Notification title
  * @param {string} body - Notification body text
  */
@@ -250,7 +297,15 @@ const updateItem = (collection, index, update, validator) => {
   return { ok: true };
 };
 
+/**
+ * App lifecycle and event handlers
+ */
 app.whenReady().then(() => {
+  // Set application name for macOS menu bar and dock
+  if (process.platform === "darwin") {
+    app.setName("CashMoo");
+  }
+
   init();
   createWindow();
 
@@ -276,6 +331,10 @@ app.on("certificate-error", (event, _webContents, url, _error, _certificate, cal
   }
 });
 
+/**
+ * IPC Main Handlers - Setup
+ */
+
 ipcMain.handle("setup:save", (_event, payload) => {
   const validation = validateSetup(payload);
 
@@ -295,10 +354,18 @@ ipcMain.handle("setup:save", (_event, payload) => {
   return { ok: true };
 });
 
+/**
+ * IPC Main Handlers - Navigation
+ */
+
 ipcMain.handle("nav:ready", () => {
   const data = readData();
   return { ok: true, data };
 });
+
+/**
+ * IPC Main Handlers - Dashboard
+ */
 
 ipcMain.handle("dashboard:summary", () => {
   const data = readData();
@@ -325,6 +392,10 @@ ipcMain.handle("dashboard:summary", () => {
     cardsUsage
   };
 });
+
+/**
+ * IPC Main Handlers - Expenses
+ */
 
 ipcMain.handle("expenses:list", () => {
   const data = readData();
@@ -399,6 +470,10 @@ ipcMain.handle("expenses:update-status", (_event, payload) => {
   return { ok: true };
 });
 
+/**
+ * IPC Main Handlers - Incomes
+ */
+
 ipcMain.handle("incomes:list", () => {
   const data = readData();
   return { ok: true, items: data.incomes };
@@ -471,6 +546,10 @@ ipcMain.handle("incomes:update-status", (_event, payload) => {
   writeData(data);
   return { ok: true };
 });
+
+/**
+ * IPC Main Handlers - Cards
+ */
 
 ipcMain.handle("cards:list", () => {
   const data = readData();
@@ -555,6 +634,10 @@ ipcMain.handle("cards:remove", (_event, payload) => {
   return { ok: true };
 });
 
+/**
+ * IPC Main Handlers - Goals
+ */
+
 ipcMain.handle("goals:list", () => {
   const data = readData();
   return { ok: true, items: data.goals };
@@ -593,6 +676,10 @@ ipcMain.handle("goals:remove", (_event, payload) => {
   return { ok: true };
 });
 
+/**
+ * IPC Main Handlers - Notifications
+ */
+
 ipcMain.handle("notifications:get", () => {
   const data = readData();
   data.settings.notifications.alertDays = [7];
@@ -621,6 +708,10 @@ ipcMain.handle("notifications:update", (_event, payload) => {
   writeData(data);
   return { ok: true };
 });
+
+/**
+ * IPC Main Handlers - Settings
+ */
 
 ipcMain.handle("settings:get", () => {
   const data = readData();
@@ -656,6 +747,10 @@ ipcMain.handle("settings:update", (_event, payload) => {
   writeData(data);
   return { ok: true };
 });
+
+/**
+ * IPC Main Handlers - Data Management
+ */
 
 ipcMain.handle("data:export", async () => {
   const exportPath = await exportDataFile();
