@@ -1,50 +1,123 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>CashMoo Settings</title>
+    <title>Settings</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+    <meta name="description" content="Configure app preferences and manage your financial data." />
     <link rel="stylesheet" href="styles/globals.css" />
   </head>
 
   <body>
-    <h1>Settings</h1>
-    <nav>
-      <a href="index.html">Dashboard</a>
-      <a href="expenses.html">Expenses</a>
-      <a href="incomes.html">Incomes</a>
-      <a href="cards.html">Cards</a>
-      <a href="goals.html">Goals</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="settings.html">Settings</a>
+    <header>
+      <h1>Settings</h1>
+      <p>Customize your CashMoo experience and manage your data.</p>
+    </header>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="expenses.html">Expenses</a></li>
+        <li><a href="incomes.html">Incomes</a></li>
+        <li><a href="cards.html">Cards</a></li>
+        <li><a href="goals.html">Goals</a></li>
+        <li><a href="notifications.html">Notifications</a></li>
+        <li><a href="settings.html" aria-current="page">Settings</a></li>
+      </ul>
     </nav>
-    <form id="settingsForm">
-      <div>
-        <label>User name</label>
-        <input id="settingsUserName" type="text" maxlength="30" required />
-      </div>
-      <div>
-        <label>Default currency</label>
-        <select id="settingsCurrency">
-          <option value="BRL">BRL</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
-      </div>
-      <div>
-        <label>Date format</label>
-        <select id="settingsDateFormat">
-          <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-          <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-        </select>
-      </div>
-      <div id="settingsError" style="color: red"></div>
-      <button type="submit">Save</button>
-    </form>
-    <h2>Data</h2>
-    <button id="exportBtn">Export JSON</button>
-    <button id="importBtn">Import JSON</button>
-    <button id="resetBtn">Reset application</button>
+
+    <main>
+      <section aria-labelledby="preferences-heading">
+        <h2 id="preferences-heading">Application Preferences</h2>
+        <p>Personalize how CashMoo displays information and formats your data. These settings affect how you see amounts, dates, and other information throughout the app.</p>
+
+        <form id="settingsForm">
+          <fieldset>
+            <legend>Personal Information</legend>
+
+            <div class="form-group">
+              <label for="settingsUserName">Your name</label>
+              <input id="settingsUserName" type="text" maxlength="30" required placeholder="Enter your name" aria-describedby="username-help" />
+              <p id="username-help" class="help-text">This appears in the app interface and can be anything you prefer. Maximum 30 characters.</p>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Display Preferences</legend>
+
+            <div class="form-group">
+              <label for="settingsCurrency">Default currency</label>
+              <select id="settingsCurrency" aria-describedby="currency-help">
+                <option value="BRL">Brazilian Real (BRL)</option>
+                <option value="USD">US Dollar (USD)</option>
+                <option value="EUR">Euro (EUR)</option>
+              </select>
+              <p id="currency-help" class="help-text">All amounts in the app will be displayed with this currency. You can change this at any time without affecting your data.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="settingsDateFormat">Date format</label>
+              <select id="settingsDateFormat" aria-describedby="date-help">
+                <option value="DD/MM/YYYY">Day/Month/Year (DD/MM/YYYY)</option>
+                <option value="MM/DD/YYYY">Month/Day/Year (MM/DD/YYYY)</option>
+              </select>
+              <p id="date-help" class="help-text">Choose how dates appear throughout the app. This affects bill due dates, income schedules, and reports.</p>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="submit">Save Preferences</button>
+          </div>
+
+          <div id="settingsError" role="alert" aria-live="assertive" style="color: red"></div>
+        </form>
+      </section>
+
+      <section aria-labelledby="data-management-heading">
+        <h2 id="data-management-heading">Data Management</h2>
+        <p>Your financial data is stored locally on your computer for maximum privacy. Use these tools to backup, restore, or reset your information.</p>
+
+        <div class="data-actions">
+          <article aria-labelledby="backup-heading">
+            <h3 id="backup-heading">Backup & Restore</h3>
+            <p>Keep your financial data safe by creating backups. All exports are in standard JSON format and contain your complete financial history.</p>
+
+            <div class="action-group">
+              <button id="exportBtn" type="button">Export Your Data</button>
+              <p class="help-text">Download all your financial data as a JSON file. Keep this file safe as a backup of your complete financial history.</p>
+            </div>
+
+            <div class="action-group">
+              <button id="importBtn" type="button">Import Data</button>
+              <p class="help-text">Restore your data from a previously exported JSON file. This will replace all current data, so make sure to export first if needed.</p>
+            </div>
+          </article>
+
+          <article aria-labelledby="reset-heading">
+            <h3 id="reset-heading">Fresh Start</h3>
+            <p>Need to start over? This will permanently remove all your data and return CashMoo to its initial state.</p>
+
+            <div class="action-group">
+              <button id="resetBtn" type="button" class="danger-action">Reset All Data</button>
+              <p class="help-text">
+                <strong>Warning:</strong> This action cannot be undone. All expenses, income, cards, and goals will be permanently deleted. Export your data first if you want to keep a backup.
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <section aria-labelledby="privacy-info-heading">
+          <h3 id="privacy-info-heading">Your Privacy Matters</h3>
+          <ul>
+            <li><strong>Local storage only:</strong> All your financial data stays on your computer and never gets sent anywhere.</li>
+            <li><strong>No cloud sync:</strong> CashMoo works completely offline, ensuring your sensitive information remains private.</li>
+            <li><strong>Automatic backups:</strong> The app creates weekly backups automatically to protect against data loss.</li>
+            <li><strong>Export control:</strong> You control when and where your data goes through manual exports.</li>
+          </ul>
+        </section>
+      </section>
+    </main>
+
     <script src="renderer.js"></script>
   </body>
 </html>

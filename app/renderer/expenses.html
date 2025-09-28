@@ -1,88 +1,208 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>CashMoo Expenses</title>
+    <title>Expenses & Bills</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+    <meta name="description" content="Track and manage all your expenses, bills, and recurring payments." />
     <link rel="stylesheet" href="styles/globals.css" />
   </head>
 
   <body>
-    <h1>Expenses</h1>
-    <nav>
-      <a href="index.html">Dashboard</a>
-      <a href="expenses.html">Expenses</a>
-      <a href="incomes.html">Incomes</a>
-      <a href="cards.html">Cards</a>
-      <a href="goals.html">Goals</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="settings.html">Settings</a>
+    <header>
+      <h1>Expenses & Bills</h1>
+      <p>Keep tabs on where your money goes.</p>
+    </header>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="expenses.html" aria-current="page">Expenses</a></li>
+        <li><a href="incomes.html">Incomes</a></li>
+        <li><a href="cards.html">Cards</a></li>
+        <li><a href="goals.html">Goals</a></li>
+        <li><a href="notifications.html">Notifications</a></li>
+        <li><a href="settings.html">Settings</a></li>
+      </ul>
     </nav>
-    <form id="expenseForm">
-      <div>
-        <label>Name</label>
-        <input id="expenseName" type="text" maxlength="50" required placeholder="Name" />
-      </div>
-      <div>
-        <label>Description</label>
-        <input id="expenseDescription" type="text" maxlength="200" placeholder="Description" />
-      </div>
-      <div>
-        <label>Amount</label>
-        <input id="expenseAmount" type="text" inputmode="decimal" required placeholder="0.00" />
-      </div>
-      <div>
-        <label>Recurrence</label>
-        <select id="expenseRecurrence" required></select>
-      </div>
-      <div id="expenseDueDateWrap" style="display: none">
-        <label>Due date</label>
-        <input id="expenseDueDate" type="date" />
-      </div>
-      <div id="expenseWeeklyWrap" style="display: none">
-        <label>Day of week</label>
-        <select id="expenseWeekday"></select>
-      </div>
-      <div id="expenseMonthlyWrap" style="display: none">
-        <label>Day of month</label>
-        <input id="expenseDay" type="number" min="1" max="30" placeholder="1" />
-      </div>
-      <div id="expenseAnnualWrap" style="display: none">
-        <label>Month</label>
-        <select id="expenseMonth"></select>
-        <label>Day</label>
-        <input id="expenseDayAnnual" type="number" min="1" max="30" placeholder="1" />
-      </div>
-      <div>
-        <label>Payment method</label>
-        <select id="expensePayment" required>
-          <option value="auto-debit">Auto debit</option>
-          <option value="manual">Manual</option>
-          <option value="card">Card</option>
-        </select>
-      </div>
-      <div id="expenseCardWrap" style="display: none">
-        <label>Card</label>
-        <select id="expenseCard"></select>
-      </div>
-      <div id="expenseError" style="color: red"></div>
-      <button id="expenseSubmit" type="submit">Add expense</button>
-    </form>
-    <h2>List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Amount</th>
-          <th>Recurrence</th>
-          <th>Payment</th>
-          <th>Due date</th>
-          <th>Card</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="expensesBody"></tbody>
-    </table>
+
+    <main>
+      <section aria-labelledby="add-expense-heading">
+        <h2 id="add-expense-heading">Add New Expense</h2>
+        <p>Track your spending to understand where your money goes. Record both regular bills and one-time expenses to get a complete picture of your financial commitments.</p>
+
+        <form id="expenseForm">
+          <fieldset>
+            <legend>Expense Details</legend>
+
+            <div class="form-group">
+              <label for="expenseName">Expense name *</label>
+              <input id="expenseName" type="text" maxlength="50" required placeholder="e.g., Rent, Groceries, Netflix, Car Payment" aria-describedby="expense-name-help" />
+              <p id="expense-name-help" class="help-text">Give this expense a clear name that helps you identify it quickly.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="expenseDescription">Description</label>
+              <input id="expenseDescription" type="text" maxlength="200" placeholder="Additional details (optional)" aria-describedby="expense-description-help" />
+              <p id="expense-description-help" class="help-text">Add notes like account numbers, specific services, or any details that help you remember this expense.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="expenseAmount">Amount *</label>
+              <input id="expenseAmount" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="expense-amount-help" />
+              <p id="expense-amount-help" class="help-text">Enter the amount you pay each time. For variable expenses like utilities, use your average monthly amount.</p>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Payment Schedule</legend>
+            <p>How often do you pay this expense? This helps predict your monthly spending.</p>
+
+            <div class="form-group">
+              <label for="expenseRecurrence">Frequency *</label>
+              <select id="expenseRecurrence" required aria-describedby="expense-recurrence-help">
+                <!-- Options populated by JavaScript -->
+              </select>
+              <p id="expense-recurrence-help" class="help-text">Choose how often you pay this expense.</p>
+            </div>
+
+            <div id="expenseDueDateWrap" style="display: none" class="form-group">
+              <label for="expenseDueDate">Due date</label>
+              <input id="expenseDueDate" type="date" aria-describedby="expense-due-help" />
+              <p id="expense-due-help" class="help-text">When is this one-time expense due?</p>
+            </div>
+
+            <div id="expenseWeeklyWrap" style="display: none" class="form-group">
+              <label for="expenseWeekday">Day of week</label>
+              <select id="expenseWeekday" aria-describedby="expense-weekday-help">
+                <!-- Options populated by JavaScript -->
+              </select>
+              <p id="expense-weekday-help" class="help-text">Which day of the week is this expense typically due?</p>
+            </div>
+
+            <div id="expenseMonthlyWrap" style="display: none" class="form-group">
+              <label for="expenseDay">Day of month</label>
+              <input id="expenseDay" type="number" min="1" max="30" placeholder="15" aria-describedby="expense-monthly-help" />
+              <p id="expense-monthly-help" class="help-text">Which day of the month is this bill due? (e.g., rent on the 1st, credit card on the 15th)</p>
+            </div>
+
+            <div id="expenseAnnualWrap" style="display: none" class="form-group">
+              <label for="expenseMonth">Month</label>
+              <select id="expenseMonth" aria-describedby="expense-annual-month-help">
+                <!-- Options populated by JavaScript -->
+              </select>
+              <label for="expenseDayAnnual">Day</label>
+              <input id="expenseDayAnnual" type="number" min="1" max="30" placeholder="1" aria-describedby="expense-annual-day-help" />
+              <p id="expense-annual-month-help" class="help-text">When is this annual expense due?</p>
+              <p id="expense-annual-day-help" class="help-text">Examples: insurance premiums, property taxes, subscription renewals.</p>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Payment Method</legend>
+            <p>How do you typically pay this expense?</p>
+
+            <div class="form-group">
+              <label for="expensePayment">Payment type *</label>
+              <select id="expensePayment" required aria-describedby="expense-payment-help">
+                <option value="auto-debit">Automatic payment (bank account)</option>
+                <option value="manual">Manual payment (cash, check, bank transfer)</option>
+                <option value="card">Credit card</option>
+              </select>
+              <p id="expense-payment-help" class="help-text">Choose how you pay this bill. This helps track payment methods and credit card usage.</p>
+            </div>
+
+            <div id="expenseCardWrap" style="display: none" class="form-group">
+              <label for="expenseCard">Credit card</label>
+              <select id="expenseCard" aria-describedby="expense-card-help">
+                <!-- Options populated by JavaScript -->
+              </select>
+              <p id="expense-card-help" class="help-text">Which credit card do you use for this expense? This helps monitor your card balances.</p>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button id="expenseSubmit" type="submit">Add Expense</button>
+          </div>
+
+          <div id="expenseError" role="alert" aria-live="assertive" style="color: red"></div>
+        </form>
+
+        <section aria-labelledby="expense-tips-heading">
+          <h3 id="expense-tips-heading">Expense Tracking Tips</h3>
+          <ul>
+            <li><strong>Start with fixed expenses:</strong> Begin with rent, insurance, and loan payments - these are easier to track and budget for.</li>
+            <li><strong>Variable expenses:</strong> For utilities or groceries, use your average monthly amount to get better budget predictions.</li>
+            <li><strong>Payment reminders:</strong> Enable notifications to avoid late fees and maintain good payment history.</li>
+            <li><strong>Credit card expenses:</strong> Track which card you use for each expense to monitor your credit utilization.</li>
+          </ul>
+        </section>
+      </section>
+
+      <section aria-labelledby="expense-list-heading">
+        <h2 id="expense-list-heading">Your Expenses</h2>
+        <p>All your expenses and bills organized in one place. Mark expenses as paid when you complete the payment to track your actual spending.</p>
+
+        <table role="table" aria-labelledby="expense-list-heading">
+          <thead>
+            <tr>
+              <th scope="col">Expense Name</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Frequency</th>
+              <th scope="col">Payment Method</th>
+              <th scope="col">Due Date</th>
+              <th scope="col">Credit Card</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="expensesBody">
+            <!-- Dynamic content populated by JavaScript -->
+          </tbody>
+        </table>
+
+        <div class="empty-state" style="display: none">
+          <p>No expenses added yet. Add your first expense above to start tracking your spending!</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="expense-categories-heading">
+        <h3 id="expense-categories-heading">Common Expense Categories</h3>
+        <p>Not sure what expenses to track? Here are the most important categories to consider:</p>
+
+        <div class="expense-categories">
+          <article>
+            <h4>Housing & Utilities</h4>
+            <p>Rent/mortgage, electricity, water, gas, internet, phone. Usually your largest expense category.</p>
+          </article>
+
+          <article>
+            <h4>Transportation</h4>
+            <p>Car payments, insurance, gas, public transit, maintenance. Track both fixed and variable costs.</p>
+          </article>
+
+          <article>
+            <h4>Food & Groceries</h4>
+            <p>Groceries, dining out, coffee, meal subscriptions. Use average amounts for better budgeting.</p>
+          </article>
+
+          <article>
+            <h4>Insurance & Healthcare</h4>
+            <p>Health, dental, life, disability insurance. Often annual or quarterly payments.</p>
+          </article>
+
+          <article>
+            <h4>Subscriptions & Entertainment</h4>
+            <p>Streaming services, gym memberships, magazines. Small amounts that add up quickly.</p>
+          </article>
+
+          <article>
+            <h4>Debt Payments</h4>
+            <p>Credit cards, student loans, personal loans. Track minimum payments and extra payments separately.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
     <script src="renderer.js"></script>
   </body>
 </html>

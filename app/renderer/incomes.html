@@ -1,78 +1,179 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>CashMoo Incomes</title>
+    <title>Income Sources</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+    <meta name="description" content="Track all your income sources including salary, freelance work, and other earnings." />
     <link rel="stylesheet" href="styles/globals.css" />
   </head>
 
   <body>
-    <h1>Incomes</h1>
-    <nav>
-      <a href="index.html">Dashboard</a>
-      <a href="expenses.html">Expenses</a>
-      <a href="incomes.html">Incomes</a>
-      <a href="cards.html">Cards</a>
-      <a href="goals.html">Goals</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="settings.html">Settings</a>
+    <header>
+      <h1>Income Sources</h1>
+      <p>Track every penny that moos into your account.</p>
+    </header>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="expenses.html">Expenses</a></li>
+        <li><a href="incomes.html" aria-current="page">Incomes</a></li>
+        <li><a href="cards.html">Cards</a></li>
+        <li><a href="goals.html">Goals</a></li>
+        <li><a href="notifications.html">Notifications</a></li>
+        <li><a href="settings.html">Settings</a></li>
+      </ul>
     </nav>
-    <form id="incomeForm">
-      <div>
-        <label>Name</label>
-        <input id="incomeName" type="text" maxlength="50" required placeholder="Name" />
-      </div>
-      <div>
-        <label>Description</label>
-        <input id="incomeDescription" type="text" maxlength="200" placeholder="Description" />
-      </div>
-      <div>
-        <label>Company</label>
-        <input id="incomeCompany" type="text" maxlength="50" placeholder="Company" />
-      </div>
-      <div>
-        <label>Amount</label>
-        <input id="incomeAmount" type="text" inputmode="decimal" required placeholder="0.00" />
-      </div>
-      <div>
-        <label>Recurrence</label>
-        <select id="incomeRecurrence" required></select>
-      </div>
-      <div id="incomeReceiveDateWrap" style="display: none">
-        <label>Receive date</label>
-        <input id="incomeReceiveDate" type="date" />
-      </div>
-      <div id="incomeWeeklyWrap" style="display: none">
-        <label>Day of week</label>
-        <select id="incomeWeekday"></select>
-      </div>
-      <div id="incomeMonthlyWrap" style="display: none">
-        <label>Day of month</label>
-        <input id="incomeDay" type="number" min="1" max="30" placeholder="1" />
-      </div>
-      <div id="incomeAnnualWrap" style="display: none">
-        <label>Month</label>
-        <select id="incomeMonth"></select>
-        <label>Day</label>
-        <input id="incomeDayAnnual" type="number" min="1" max="30" placeholder="1" />
-      </div>
-      <div id="incomeError" style="color: red"></div>
-      <button id="incomeSubmit" type="submit">Add income</button>
-    </form>
-    <h2>List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Amount</th>
-          <th>Recurrence</th>
-          <th>Schedule</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="incomesBody"></tbody>
-    </table>
+
+    <main>
+      <section aria-labelledby="add-income-heading">
+        <h2 id="add-income-heading">Add New Income Source</h2>
+        <p>Record all money coming in to get a complete picture of your financial situation. Include your salary, side hustles, investments, or any other income streams.</p>
+
+        <form id="incomeForm">
+          <fieldset>
+            <legend>Income Details</legend>
+
+            <div class="form-group">
+              <label for="incomeName">Income name *</label>
+              <input id="incomeName" type="text" maxlength="50" required placeholder="e.g., Main Job, Freelance Work, Rental Income" aria-describedby="name-help" />
+              <p id="name-help" class="help-text">Give this income source a clear name so you can easily identify it later.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="incomeDescription">Description</label>
+              <input id="incomeDescription" type="text" maxlength="200" placeholder="Additional details about this income (optional)" aria-describedby="description-help" />
+              <p id="description-help" class="help-text">Add any extra details like project names, client info, or notes about this income source.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="incomeCompany">Company or source</label>
+              <input id="incomeCompany" type="text" maxlength="50" placeholder="Employer name, client, or income source" aria-describedby="company-help" />
+              <p id="company-help" class="help-text">Where does this money come from? Your employer, a client, investment platform, etc.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="incomeAmount">Amount *</label>
+              <input id="incomeAmount" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="amount-help" />
+              <p id="amount-help" class="help-text">Enter the amount you receive each time. For hourly work, use your typical weekly or monthly total.</p>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Payment Schedule</legend>
+            <p>When do you typically receive this income? This helps predict your cash flow.</p>
+
+            <div class="form-group">
+              <label for="incomeRecurrence">How often *</label>
+              <select id="incomeRecurrence" required aria-describedby="recurrence-help">
+                <!-- Options populated by JavaScript -->
+              </select>
+              <p id="recurrence-help" class="help-text">Choose how frequently you receive this income payment.</p>
+            </div>
+
+            <div id="incomeReceiveDateWrap" style="display: none" class="form-group">
+              <label for="incomeReceiveDate">Receive date</label>
+              <input id="incomeReceiveDate" type="date" aria-describedby="receive-date-help" />
+              <p id="receive-date-help" class="help-text">When will you receive this one-time payment?</p>
+            </div>
+
+            <div id="incomeWeeklyWrap" style="display: none" class="form-group">
+              <label for="incomeWeekday">Day of week</label>
+              <select id="incomeWeekday" aria-describedby="weekday-help">
+                <!-- Options populated by JavaScript -->
+              </select>
+              <p id="weekday-help" class="help-text">Which day of the week do you typically get paid?</p>
+            </div>
+
+            <div id="incomeMonthlyWrap" style="display: none" class="form-group">
+              <label for="incomeDay">Day of month</label>
+              <input id="incomeDay" type="number" min="1" max="30" placeholder="15" aria-describedby="monthly-day-help" />
+              <p id="monthly-day-help" class="help-text">Which day of the month do you receive this income? (e.g., 1st, 15th, last day)</p>
+            </div>
+
+            <div id="incomeAnnualWrap" style="display: none" class="form-group">
+              <label for="incomeMonth">Month</label>
+              <select id="incomeMonth" aria-describedby="annual-month-help">
+                <!-- Options populated by JavaScript -->
+              </select>
+              <label for="incomeDayAnnual">Day</label>
+              <input id="incomeDayAnnual" type="number" min="1" max="30" placeholder="1" aria-describedby="annual-day-help" />
+              <p id="annual-month-help" class="help-text">When do you receive this annual payment?</p>
+              <p id="annual-day-help" class="help-text">Examples: tax refunds, bonuses, yearly dividends.</p>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button id="incomeSubmit" type="submit">Add Income Source</button>
+          </div>
+
+          <div id="incomeError" role="alert" aria-live="assertive" style="color: red"></div>
+        </form>
+
+        <section aria-labelledby="income-tips-heading">
+          <h3 id="income-tips-heading">Income Tracking Tips</h3>
+          <ul>
+            <li><strong>Include everything:</strong> Track all income sources, no matter how small. Side hustles and occasional income add up!</li>
+            <li><strong>Use net amounts:</strong> Enter what you actually receive after taxes and deductions for more accurate budgeting.</li>
+            <li><strong>Variable income:</strong> For freelance or commission work, use your average monthly amount or create separate entries for different clients.</li>
+            <li><strong>Pending vs confirmed:</strong> Mark income as "confirmed" only after you've actually received the payment.</li>
+          </ul>
+        </section>
+      </section>
+
+      <section aria-labelledby="income-list-heading">
+        <h2 id="income-list-heading">Your Income Sources</h2>
+        <p>All your income streams in one place. Mark payments as confirmed when you receive them to track your actual cash flow.</p>
+
+        <table role="table" aria-labelledby="income-list-heading">
+          <thead>
+            <tr>
+              <th scope="col">Income Name</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Frequency</th>
+              <th scope="col">Payment Schedule</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="incomesBody">
+            <!-- Dynamic content populated by JavaScript -->
+          </tbody>
+        </table>
+
+        <div class="empty-state" style="display: none">
+          <p>No income sources added yet. Add your first income above to start tracking your earnings!</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="income-examples-heading">
+        <h3 id="income-examples-heading">Common Income Types</h3>
+        <p>Not sure what to track? Here are examples of income sources you might want to add:</p>
+
+        <div class="income-examples">
+          <article>
+            <h4>Regular Employment</h4>
+            <p>Your main job salary or wages. Use monthly frequency for salaried positions, or weekly for hourly jobs.</p>
+          </article>
+
+          <article>
+            <h4>Freelance & Contract Work</h4>
+            <p>Project-based income from clients. You can create separate entries for each major client or combine into one "Freelance" category.</p>
+          </article>
+
+          <article>
+            <h4>Investment Income</h4>
+            <p>Dividends, interest, rental income, or returns from investments. Track when payments typically arrive.</p>
+          </article>
+
+          <article>
+            <h4>Side Hustles</h4>
+            <p>Income from selling items online, gig economy work, or part-time jobs. Every dollar counts toward your financial goals!</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
     <script src="renderer.js"></script>
   </body>
 </html>
