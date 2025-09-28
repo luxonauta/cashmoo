@@ -6,19 +6,79 @@
   "author": "CashMoo",
   "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "start": "electron .",
-    "lint": "eslint . --fix && prettier . --write"
+    "start:dev": "electron . --enable-logging --inspect",
+    "start:debug": "electron . --enable-logging --inspect --remote-debugging-port=9222",
+    "start:windows": "set NODE_ENV=production && electron .",
+    "lint": "eslint . --fix && prettier . --write",
+    "clean": "npx rimraf node_modules package-lock.json"
+  },
+  "dependencies": {
+    "electron": "^38.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.36.0",
-    "electron": "^38.2.0",
+    "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "eslint": "^9.36.0",
     "globals": "^16.4.0",
-    "prettier-plugin-css-order": "^2.1.2",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "prettier-plugin-css-order": "^2.1.2"
+  },
+  "electronVersion": "38.2.0",
+  "config": {
+    "windows": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  },
+  "build": {
+    "appId": "com.cashmoo.app",
+    "productName": "CashMoo",
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "app/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.finance"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png",
+      "category": "Office"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }

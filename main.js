@@ -12,7 +12,7 @@ let mainWindow = null;
 let notificationTimer = null;
 
 /**
- * Creates the main application window
+ * Creates the main application window with Windows-specific configurations
  */
 const createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -24,7 +24,18 @@ const createWindow = () => {
       nodeIntegration: false,
       sandbox: true
     },
-    title: "CashMoo"
+    title: "CashMoo",
+    show: false,
+    autoHideMenuBar: true,
+    icon: process.platform === "win32" ? path.join(__dirname, "icon.ico") : undefined
+  });
+
+  mainWindow.once("ready-to-show", () => {
+    mainWindow.show();
+  });
+
+  mainWindow.webContents.on("did-fail-load", (event, errorCode, errorDescription) => {
+    console.error("Failed to load:", errorCode, errorDescription);
   });
 
   const data = readData();
@@ -34,46 +45,60 @@ const createWindow = () => {
 };
 
 /**
- * Initializes the application data and services
+ * Initializes the application data and services with error handling
  */
 const init = () => {
-  ensureDataFiles();
-  const recoverySuccess = tryRecoverFromBackup();
+  try {
+    ensureDataFiles();
+    const recoverySuccess = tryRecoverFromBackup();
 
-  if (!recoverySuccess) {
-    dialog.showErrorBox("Data Error", "Data could not be recovered. A fresh file has been created.");
+    if (!recoverySuccess) {
+      if (mainWindow) {
+        dialog.showMessageBox(mainWindow, {
+          type: "error",
+          title: "Data Error",
+          message: "Data could not be recovered. A fresh file has been created."
+        });
+      }
+    }
+
+    ensureWeeklyBackup();
+    startNotificationLoop();
+  } catch (error) {
+    console.error("Initialization error:", error);
   }
-
-  ensureWeeklyBackup();
-  startNotificationLoop();
 };
 
 /**
- * Starts the notification monitoring loop
+ * Starts the notification monitoring loop with error handling
  */
 const startNotificationLoop = () => {
   if (notificationTimer) clearInterval(notificationTimer);
 
   notificationTimer = setInterval(
     () => {
-      const data = readData();
+      try {
+        const data = readData();
 
-      if (!data.settings.notifications.enabled) return;
+        if (!data.settings.notifications.enabled) return;
 
-      const aheadDays = 7;
-      const unpaidExpenses = data.expenses.filter((expense) => expense.status !== "paid");
+        const aheadDays = 7;
+        const unpaidExpenses = data.expenses.filter((expense) => expense.status !== "paid");
 
-      if (data.settings.notifications.alertsDue) {
-        unpaidExpenses.forEach((expense) => {
-          const dueDate = nextDueDateForExpense(expense);
+        if (data.settings.notifications.alertsDue) {
+          unpaidExpenses.forEach((expense) => {
+            const dueDate = nextDueDateForExpense(expense);
 
-          if (!dueDate) return;
+            if (!dueDate) return;
 
-          if (isWithinDaysFromToday(dueDate, aheadDays)) {
-            const formattedDate = toUserFormat(dueDate, data.settings.dateFormat);
-            showBasicNotification("Upcoming bill", `${expense.name} due on ${formattedDate}`);
-          }
-        });
+            if (isWithinDaysFromToday(dueDate, aheadDays)) {
+              const formattedDate = toUserFormat(dueDate, data.settings.dateFormat);
+              showBasicNotification("Upcoming bill", `${expense.name} due on ${formattedDate}`);
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Notification loop error:", error);
       }
     },
     60 * 60 * 1000
@@ -81,12 +106,18 @@ const startNotificationLoop = () => {
 };
 
 /**
- * Shows a basic system notification
+ * Shows a basic system notification with Windows compatibility check
  * @param {string} title - Notification title
  * @param {string} body - Notification body text
  */
 const showBasicNotification = (title, body) => {
-  new Notification({ title, body }).show();
+  try {
+    if (Notification.isSupported()) {
+      new Notification({ title, body }).show();
+    }
+  } catch (error) {
+    console.error("Notification error:", error);
+  }
 };
 
 /**
@@ -236,7 +267,16 @@ app.on("window-all-closed", () => {
   }
 });
 
-ipcMain.handle("setup:save", (payload) => {
+app.on("certificate-error", (event, _webContents, url, _error, _certificate, callback) => {
+  if (url.startsWith("file://")) {
+    event.preventDefault();
+    callback(true);
+  } else {
+    callback(false);
+  }
+});
+
+ipcMain.handle("setup:save", (_event, payload) => {
   const validation = validateSetup(payload);
 
   if (!validation.valid) {
@@ -291,7 +331,7 @@ ipcMain.handle("expenses:list", () => {
   return { ok: true, items: data.expenses };
 });
 
-ipcMain.handle("expenses:add", (payload) => {
+ipcMain.handle("expenses:add", (_event, payload) => {
   const validation = validateExpense(payload);
 
   if (!validation.valid) {
@@ -312,7 +352,7 @@ ipcMain.handle("expenses:add", (payload) => {
   return { ok: true, id };
 });
 
-ipcMain.handle("expenses:update", (payload) => {
+ipcMain.handle("expenses:update", (_event, payload) => {
   const data = readData();
   const itemIndex = findItemIndex(data.expenses, payload.id);
 
@@ -329,7 +369,7 @@ ipcMain.handle("expenses:update", (payload) => {
   return { ok: true };
 });
 
-ipcMain.handle("expenses:remove", (payload) => {
+ipcMain.handle("expenses:remove", (_event, payload) => {
   const data = readData();
   const itemIndex = findItemIndex(data.expenses, payload.id);
 
@@ -342,7 +382,7 @@ ipcMain.handle("expenses:remove", (payload) => {
   return { ok: true };
 });
 
-ipcMain.handle("expenses:update-status", (payload) => {
+ipcMain.handle("expenses:update-status", (_event, payload) => {
   const data = readData();
   const itemIndex = findItemIndex(data.expenses, payload.id);
 
@@ -364,7 +404,7 @@ ipcMain.handle("incomes:list", () => {
   return { ok: true, items: data.incomes };
 });
 
-ipcMain.handle("incomes:add", (payload) => {
+ipcMain.handle("incomes:add", (_event, payload) => {
   const validation = validateIncome(payload);
 
   if (!validation.valid) {
@@ -385,7 +425,7 @@ ipcMain.handle("incomes:add", (payload) => {
   return { ok: true, id };
 });
 
-ipcMain.handle("incomes:update", (payload) => {
+ipcMain.handle("incomes:update", (_event, payload) => {
   const data = readData();
   const itemIndex = findItemIndex(data.incomes, payload.id);
 
@@ -402,7 +442,7 @@ ipcMain.handle("incomes:update", (payload) => {
   return { ok: true };
 });
 
-ipcMain.handle("incomes:remove", (payload) => {
+ipcMain.handle("incomes:remove", (_event, payload) => {
   const data = readData();
   const itemIndex = findItemIndex(data.incomes, payload.id);
 
@@ -415,7 +455,7 @@ ipcMain.handle("incomes:remove", (payload) => {
   return { ok: true };
 });
 
-ipcMain.handle("incomes:update-status", (payload) => {
+ipcMain.handle("incomes:update-status", (_event, payload) => {
   const data = readData();
   const itemIndex = findItemIndex(data.incomes, payload.id);
 
@@ -437,7 +477,7 @@ ipcMain.handle("cards:list", () => {
   return { ok: true, items: data.cards };
 });
 
-ipcMain.handle("cards:add", (payload) => {
+ipcMain.handle("cards:add", (_event, payload) => {
   const validation = validateCard(payload);
 
   if (!validation.valid) {
@@ -466,7 +506,7 @@ ipcMain.handle("cards:add", (payload) => {
   return { ok: true, id };
 });
 
-ipcMain.handle("cards:update", (payload) => {
+ipcMain.handle("cards:update", (_event, payload) => {
   const data = readData();
   const itemIndex = findItemIndex(data.cards, payload.id);
 
@@ -496,7 +536,7 @@ ipcMain.handle("cards:update", (payload) => {
   return { ok: true };
 });
 
-ipcMain.handle("cards:remove", (payload) => {
+ipcMain.handle("cards:remove", (_event, payload) => {
   const data = readData();
   const itemIndex = findItemIndex(data.cards, payload.id);
 
@@ -520,7 +560,7 @@ ipcMain.handle("goals:list", () => {
   return { ok: true, items: data.goals };
 });
 
-ipcMain.handle("goals:add", (payload) => {
+ipcMain.handle("goals:add", (_event, payload) => {
   const validation = validateGoal(payload);
 
   if (!validation.valid) {
@@ -540,7 +580,7 @@ ipcMain.handle("goals:add", (payload) => {
   return { ok: true, id };
 });
 
-ipcMain.handle("goals:remove", (payload) => {
+ipcMain.handle("goals:remove", (_event, payload) => {
   const data = readData();
   const itemIndex = findItemIndex(data.goals, payload.id);
 
@@ -560,7 +600,7 @@ ipcMain.handle("notifications:get", () => {
   return { ok: true, settings: data.settings.notifications };
 });
 
-ipcMain.handle("notifications:update", (payload) => {
+ipcMain.handle("notifications:update", (_event, payload) => {
   const validation = validateNotificationSettings(payload);
 
   if (!validation.valid) {
@@ -594,7 +634,7 @@ ipcMain.handle("settings:get", () => {
   };
 });
 
-ipcMain.handle("settings:update", (payload) => {
+ipcMain.handle("settings:update", (_event, payload) => {
   const data = readData();
 
   if (!payload.userName || payload.userName.length > 30) {

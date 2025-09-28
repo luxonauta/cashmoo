@@ -3,34 +3,71 @@ import path from "path";
 import { app, dialog } from "electron";
 
 /**
- * Storage utility functions for CashMoo application
+ * Storage utility functions for CashMoo application with Windows compatibility
  */
 
 const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * Gets the base application directory path
+ * Normalizes file paths for cross-platform compatibility
+ * @param {string} filepath - File path to normalize
+ * @returns {string} Normalized file path
+ */
+const normalizePath = (filepath) => {
+  return path.normalize(filepath);
+};
+
+/**
+ * Ensures that a directory exists, creating it if necessary
+ * @param {string} dirPath - Directory path to ensure
+ * @returns {boolean} True if directory exists or was created successfully
+ */
+const ensureDirectoryExists = (dirPath) => {
+  try {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error creating directory:", error);
+    return false;
+  }
+};
+
+/**
+ * Gets the base application directory path with Windows fallback
  * @returns {string} Base directory path
  */
-const getBaseDir = () => path.join(app.getPath("userData"), "cashmoo");
+const getBaseDir = () => {
+  try {
+    const userDataPath = app.getPath("userData");
+    const baseDir = path.join(userDataPath, "cashmoo");
+    return normalizePath(baseDir);
+  } catch (error) {
+    console.error("Error getting base directory:", error);
+    const fallbackPath = path.join(process.env.APPDATA || process.env.USERPROFILE || ".", "cashmoo");
+    return normalizePath(fallbackPath);
+  }
+};
 
 /**
  * Gets the data directory path
  * @returns {string} Data directory path
  */
-const getDataDir = () => path.join(getBaseDir(), "data");
+const getDataDir = () => normalizePath(path.join(getBaseDir(), "data"));
 
 /**
  * Gets the main data file path
  * @returns {string} Data file path
  */
-export const getDataFilePath = () => path.join(getDataDir(), "data.json");
+export const getDataFilePath = () => normalizePath(path.join(getDataDir(), "data.json"));
 
 /**
  * Gets the backups directory path
  * @returns {string} Backups directory path
  */
-const getBackupsDir = () => path.join(getDataDir(), "backups");
+const getBackupsDir = () => normalizePath(path.join(getDataDir(), "backups"));
 
 /**
  * Creates the default application data structure
@@ -92,6 +129,7 @@ const validateAndNormalizeData = (data) => {
   if (!Array.isArray(data.goals)) data.goals = [];
 
   const { alertDays } = data.settings.notifications;
+
   if (!Array.isArray(alertDays) || alertDays.length === 0) {
     data.settings.notifications.alertDays = [7];
   } else {
@@ -108,8 +146,8 @@ const createDirectories = () => {
   const directories = [getBaseDir(), getDataDir(), getBackupsDir()];
 
   directories.forEach((dir) => {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    if (!ensureDirectoryExists(dir)) {
+      throw new Error(`Failed to create directory: ${dir}`);
     }
   });
 };
@@ -120,9 +158,15 @@ const createDirectories = () => {
 const createDataFileIfNeeded = () => {
   const dataFilePath = getDataFilePath();
 
-  if (!fs.existsSync(dataFilePath)) {
-    const defaultData = createDefaultData();
-    fs.writeFileSync(dataFilePath, JSON.stringify(defaultData, null, 2), "utf-8");
+  try {
+    if (!fs.existsSync(dataFilePath)) {
+      const defaultData = createDefaultData();
+      const jsonData = JSON.stringify(defaultData, null, 2);
+      fs.writeFileSync(dataFilePath, jsonData, "utf-8");
+    }
+  } catch (error) {
+    console.error("Error creating data file:", error);
+    throw error;
   }
 };
 
@@ -130,8 +174,13 @@ const createDataFileIfNeeded = () => {
  * Ensures all required data files and directories exist
  */
 export const ensureDataFiles = () => {
-  createDirectories();
-  createDataFileIfNeeded();
+  try {
+    createDirectories();
+    createDataFileIfNeeded();
+  } catch (error) {
+    console.error("Error ensuring data files:", error);
+    throw error;
+  }
 };
 
 /**
@@ -140,10 +189,19 @@ export const ensureDataFiles = () => {
  */
 export const readData = () => {
   try {
-    const rawData = fs.readFileSync(getDataFilePath(), "utf-8");
+    const dataFilePath = getDataFilePath();
+
+    if (!fs.existsSync(dataFilePath)) {
+      console.log("Data file does not exist, creating default data");
+      return createDefaultData();
+    }
+
+    const rawData = fs.readFileSync(dataFilePath, "utf-8");
     const parsedData = JSON.parse(rawData);
+
     return validateAndNormalizeData(parsedData);
-  } catch {
+  } catch (error) {
+    console.error("Error reading data:", error);
     return createDefaultData();
   }
 };
@@ -155,10 +213,12 @@ export const readData = () => {
  */
 export const writeData = (data) => {
   try {
+    const dataFilePath = getDataFilePath();
     const jsonData = JSON.stringify(data, null, 2);
-    fs.writeFileSync(getDataFilePath(), jsonData, "utf-8");
+    fs.writeFileSync(dataFilePath, jsonData, "utf-8");
     return true;
-  } catch {
+  } catch (error) {
+    console.error("Error writing data:", error);
     return false;
   }
 };
@@ -167,15 +227,19 @@ export const writeData = (data) => {
  * Checks if a weekly backup is needed and creates one
  */
 export const ensureWeeklyBackup = () => {
-  const data = readData();
-  const lastBackupTime = data.meta.lastBackupAt ? new Date(data.meta.lastBackupAt).getTime() : 0;
+  try {
+    const data = readData();
+    const lastBackupTime = data.meta.lastBackupAt ? new Date(data.meta.lastBackupAt).getTime() : 0;
 
-  const currentTime = Date.now();
-  const weeksSinceLastBackup = currentTime - lastBackupTime;
+    const currentTime = Date.now();
+    const weeksSinceLastBackup = currentTime - lastBackupTime;
 
-  if (weeksSinceLastBackup >= MILLISECONDS_PER_WEEK) {
-    createBackup();
-    updateLastBackupTime(data);
+    if (weeksSinceLastBackup >= MILLISECONDS_PER_WEEK) {
+      createBackup();
+      updateLastBackupTime(data);
+    }
+  } catch (error) {
+    console.error("Error ensuring weekly backup:", error);
   }
 };
 
@@ -183,11 +247,15 @@ export const ensureWeeklyBackup = () => {
  * Creates a backup of the current data file
  */
 const createBackup = () => {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const backupFileName = `backup_${timestamp}.json`;
-  const backupFilePath = path.join(getBackupsDir(), backupFileName);
+  try {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const backupFileName = `backup_${timestamp}.json`;
+    const backupFilePath = normalizePath(path.join(getBackupsDir(), backupFileName));
 
-  fs.copyFileSync(getDataFilePath(), backupFilePath);
+    fs.copyFileSync(getDataFilePath(), backupFilePath);
+  } catch (error) {
+    console.error("Error creating backup:", error);
+  }
 };
 
 /**
@@ -195,8 +263,12 @@ const createBackup = () => {
  * @param {Object} data - Application data object
  */
 const updateLastBackupTime = (data) => {
-  data.meta.lastBackupAt = new Date().toISOString();
-  writeData(data);
+  try {
+    data.meta.lastBackupAt = new Date().toISOString();
+    writeData(data);
+  } catch (error) {
+    console.error("Error updating backup time:", error);
+  }
 };
 
 /**
@@ -204,19 +276,25 @@ const updateLastBackupTime = (data) => {
  * @returns {boolean} True if recovery successful, false if new file created
  */
 export const tryRecoverFromBackup = () => {
-  if (isDataFileValid()) {
+  try {
+    if (isDataFileValid()) {
+      return true;
+    }
+
+    const latestBackup = findLatestBackup();
+
+    if (!latestBackup) {
+      createFreshDataFile();
+      return false;
+    }
+
+    restoreFromBackup(latestBackup);
     return true;
-  }
-
-  const latestBackup = findLatestBackup();
-
-  if (!latestBackup) {
+  } catch (error) {
+    console.error("Error recovering from backup:", error);
     createFreshDataFile();
     return false;
   }
-
-  restoreFromBackup(latestBackup);
-  return true;
 };
 
 /**
@@ -239,14 +317,21 @@ const isDataFileValid = () => {
  */
 const findLatestBackup = () => {
   try {
+    const backupsDir = getBackupsDir();
+
+    if (!fs.existsSync(backupsDir)) {
+      return null;
+    }
+
     const backupFiles = fs
-      .readdirSync(getBackupsDir())
+      .readdirSync(backupsDir)
       .filter((fileName) => fileName.endsWith(".json"))
       .sort()
       .reverse();
 
-    return backupFiles.length > 0 ? path.join(getBackupsDir(), backupFiles[0]) : null;
-  } catch {
+    return backupFiles.length > 0 ? normalizePath(path.join(backupsDir, backupFiles[0])) : null;
+  } catch (error) {
+    console.error("Error finding latest backup:", error);
     return null;
   }
 };
@@ -255,8 +340,13 @@ const findLatestBackup = () => {
  * Creates a fresh data file with default data
  */
 const createFreshDataFile = () => {
-  const defaultData = createDefaultData();
-  fs.writeFileSync(getDataFilePath(), JSON.stringify(defaultData, null, 2), "utf-8");
+  try {
+    const defaultData = createDefaultData();
+    const jsonData = JSON.stringify(defaultData, null, 2);
+    fs.writeFileSync(getDataFilePath(), jsonData, "utf-8");
+  } catch (error) {
+    console.error("Error creating fresh data file:", error);
+  }
 };
 
 /**
@@ -264,7 +354,11 @@ const createFreshDataFile = () => {
  * @param {string} backupPath - Path to backup file
  */
 const restoreFromBackup = (backupPath) => {
-  fs.copyFileSync(backupPath, getDataFilePath());
+  try {
+    fs.copyFileSync(backupPath, getDataFilePath());
+  } catch (error) {
+    console.error("Error restoring from backup:", error);
+  }
 };
 
 /**
@@ -272,21 +366,28 @@ const restoreFromBackup = (backupPath) => {
  * @returns {Promise<string|null>} Path to exported file or null if cancelled
  */
 export const exportData = async () => {
-  const currentDate = new Date().toISOString().slice(0, 10);
-  const defaultFileName = `cashmoo_export_${currentDate}.json`;
+  try {
+    const currentDate = new Date().toISOString().slice(0, 10);
+    const defaultFileName = `cashmoo_export_${currentDate}.json`;
 
-  const dialogResult = await dialog.showSaveDialog({
-    title: "Export to JSON",
-    defaultPath: defaultFileName,
-    filters: [{ name: "JSON", extensions: ["json"] }]
-  });
+    const dialogResult = await dialog.showSaveDialog({
+      title: "Export to JSON",
+      defaultPath: defaultFileName,
+      filters: [{ name: "JSON", extensions: ["json"] }]
+    });
 
-  if (dialogResult.canceled || !dialogResult.filePath) {
+    if (dialogResult.canceled || !dialogResult.filePath) {
+      return null;
+    }
+
+    const exportPath = normalizePath(dialogResult.filePath);
+    fs.copyFileSync(getDataFilePath(), exportPath);
+
+    return exportPath;
+  } catch (error) {
+    console.error("Error exporting data:", error);
     return null;
   }
-
-  fs.copyFileSync(getDataFilePath(), dialogResult.filePath);
-  return dialogResult.filePath;
 };
 
 /**
@@ -294,17 +395,23 @@ export const exportData = async () => {
  * @returns {Promise<boolean>} True if import successful, false otherwise
  */
 export const importData = async () => {
-  const dialogResult = await dialog.showOpenDialog({
-    title: "Import JSON",
-    properties: ["openFile"],
-    filters: [{ name: "JSON", extensions: ["json"] }]
-  });
+  try {
+    const dialogResult = await dialog.showOpenDialog({
+      title: "Import JSON",
+      properties: ["openFile"],
+      filters: [{ name: "JSON", extensions: ["json"] }]
+    });
 
-  if (dialogResult.canceled || !dialogResult.filePaths || dialogResult.filePaths.length === 0) {
+    if (dialogResult.canceled || !dialogResult.filePaths || dialogResult.filePaths.length === 0) {
+      return false;
+    }
+
+    const importPath = normalizePath(dialogResult.filePaths[0]);
+    return processImportedFile(importPath);
+  } catch (error) {
+    console.error("Error importing data:", error);
     return false;
   }
-
-  return processImportedFile(dialogResult.filePaths[0]);
 };
 
 /**
@@ -322,10 +429,12 @@ const processImportedFile = (filePath) => {
     }
 
     const normalizedData = normalizeImportedData(importedData);
-    fs.writeFileSync(getDataFilePath(), JSON.stringify(normalizedData, null, 2), "utf-8");
+    const jsonData = JSON.stringify(normalizedData, null, 2);
+    fs.writeFileSync(getDataFilePath(), jsonData, "utf-8");
 
     return true;
-  } catch {
+  } catch (error) {
+    console.error("Error processing imported file:", error);
     return false;
   }
 };
@@ -348,6 +457,11 @@ const normalizeImportedData = (data) => {
  * Resets all application data to default values
  */
 export const resetData = () => {
-  const defaultData = createDefaultData();
-  fs.writeFileSync(getDataFilePath(), JSON.stringify(defaultData, null, 2), "utf-8");
+  try {
+    const defaultData = createDefaultData();
+    const jsonData = JSON.stringify(defaultData, null, 2);
+    fs.writeFileSync(getDataFilePath(), jsonData, "utf-8");
+  } catch (error) {
+    console.error("Error resetting data:", error);
+  }
 };
