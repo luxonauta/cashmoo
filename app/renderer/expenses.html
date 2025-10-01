@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Expenses & Bills</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
     <meta name="description" content="Track and manage all your expenses, bills, and recurring payments." />
@@ -28,8 +29,10 @@
 
     <main>
       <section aria-labelledby="add-expense-heading">
-        <h2 id="add-expense-heading">Add New Expense</h2>
-        <p>Track your spending to understand where your money goes. Record both regular bills and one-time expenses to get a complete picture of your financial commitments.</p>
+        <h2 id="add-expense-heading" class="title-2">Add New Expense</h2>
+        <p class="body secondary-label">
+          Track your spending to understand where your money goes. Record both regular bills and one-time expenses to get a complete picture of your financial commitments.
+        </p>
 
         <form id="expenseForm">
           <fieldset>
@@ -37,7 +40,7 @@
 
             <div class="form-group">
               <label for="expenseName">Expense name *</label>
-              <input id="expenseName" type="text" maxlength="50" required placeholder="e.g., Rent, Groceries, Netflix, Car Payment" aria-describedby="expense-name-help" />
+              <input id="expenseName" type="text" maxlength="50" required placeholder="e.g., Rent, Groceries, Netflix" aria-describedby="expense-name-help" />
               <p id="expense-name-help" class="help-text">Give this expense a clear name that helps you identify it quickly.</p>
             </div>
 
@@ -50,19 +53,16 @@
             <div class="form-group">
               <label for="expenseAmount">Amount *</label>
               <input id="expenseAmount" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="expense-amount-help" />
-              <p id="expense-amount-help" class="help-text">Enter the amount you pay each time. For variable expenses like utilities, use your average monthly amount.</p>
+              <p id="expense-amount-help" class="help-text">Enter the amount you pay each time. For variable expenses, use your average monthly amount.</p>
             </div>
           </fieldset>
 
           <fieldset>
             <legend>Payment Schedule</legend>
-            <p>How often do you pay this expense? This helps predict your monthly spending.</p>
 
             <div class="form-group">
               <label for="expenseRecurrence">Frequency *</label>
-              <select id="expenseRecurrence" required aria-describedby="expense-recurrence-help">
-                <!-- Options populated by JavaScript -->
-              </select>
+              <select id="expenseRecurrence" required aria-describedby="expense-recurrence-help"></select>
               <p id="expense-recurrence-help" class="help-text">Choose how often you pay this expense.</p>
             </div>
 
@@ -74,33 +74,27 @@
 
             <div id="expenseWeeklyWrap" style="display: none" class="form-group">
               <label for="expenseWeekday">Day of week</label>
-              <select id="expenseWeekday" aria-describedby="expense-weekday-help">
-                <!-- Options populated by JavaScript -->
-              </select>
+              <select id="expenseWeekday" aria-describedby="expense-weekday-help"></select>
               <p id="expense-weekday-help" class="help-text">Which day of the week is this expense typically due?</p>
             </div>
 
             <div id="expenseMonthlyWrap" style="display: none" class="form-group">
               <label for="expenseDay">Day of month</label>
               <input id="expenseDay" type="number" min="1" max="30" placeholder="15" aria-describedby="expense-monthly-help" />
-              <p id="expense-monthly-help" class="help-text">Which day of the month is this bill due? (e.g., rent on the 1st, credit card on the 15th)</p>
+              <p id="expense-monthly-help" class="help-text">Which day of the month is this bill due?</p>
             </div>
 
             <div id="expenseAnnualWrap" style="display: none" class="form-group">
               <label for="expenseMonth">Month</label>
-              <select id="expenseMonth" aria-describedby="expense-annual-month-help">
-                <!-- Options populated by JavaScript -->
-              </select>
+              <select id="expenseMonth" aria-describedby="expense-annual-month-help"></select>
               <label for="expenseDayAnnual">Day</label>
               <input id="expenseDayAnnual" type="number" min="1" max="30" placeholder="1" aria-describedby="expense-annual-day-help" />
               <p id="expense-annual-month-help" class="help-text">When is this annual expense due?</p>
-              <p id="expense-annual-day-help" class="help-text">Examples: insurance premiums, property taxes, subscription renewals.</p>
             </div>
           </fieldset>
 
           <fieldset>
             <legend>Payment Method</legend>
-            <p>How do you typically pay this expense?</p>
 
             <div class="form-group">
               <label for="expensePayment">Payment type *</label>
@@ -109,96 +103,44 @@
                 <option value="manual">Manual payment (cash, check, bank transfer)</option>
                 <option value="card">Credit card</option>
               </select>
-              <p id="expense-payment-help" class="help-text">Choose how you pay this bill. This helps track payment methods and credit card usage.</p>
+              <p id="expense-payment-help" class="help-text">Choose how you pay this bill.</p>
             </div>
 
             <div id="expenseCardWrap" style="display: none" class="form-group">
               <label for="expenseCard">Credit card</label>
-              <select id="expenseCard" aria-describedby="expense-card-help">
-                <!-- Options populated by JavaScript -->
-              </select>
-              <p id="expense-card-help" class="help-text">Which credit card do you use for this expense? This helps monitor your card balances.</p>
+              <select id="expenseCard" aria-describedby="expense-card-help"></select>
+              <p id="expense-card-help" class="help-text">Which credit card do you use for this expense?</p>
             </div>
           </fieldset>
 
           <div class="form-actions">
-            <button id="expenseSubmit" type="submit">Add Expense</button>
+            <button id="expenseSubmit" type="submit" class="button-primary">Add Expense</button>
           </div>
 
-          <div id="expenseError" role="alert" aria-live="assertive" style="color: red"></div>
+          <div id="expenseError" role="alert" aria-live="assertive" style="color: var(--color-system-red); margin-top: var(--spacing-12)"></div>
         </form>
-
-        <section aria-labelledby="expense-tips-heading">
-          <h3 id="expense-tips-heading">Expense Tracking Tips</h3>
-          <ul>
-            <li><strong>Start with fixed expenses:</strong> Begin with rent, insurance, and loan payments - these are easier to track and budget for.</li>
-            <li><strong>Variable expenses:</strong> For utilities or groceries, use your average monthly amount to get better budget predictions.</li>
-            <li><strong>Payment reminders:</strong> Enable notifications to avoid late fees and maintain good payment history.</li>
-            <li><strong>Credit card expenses:</strong> Track which card you use for each expense to monitor your credit utilization.</li>
-          </ul>
-        </section>
       </section>
 
       <section aria-labelledby="expense-list-heading">
-        <h2 id="expense-list-heading">Your Expenses</h2>
-        <p>All your expenses and bills organized in one place. Mark expenses as paid when you complete the payment to track your actual spending.</p>
+        <h2 id="expense-list-heading" class="title-2">Your Expenses</h2>
+        <p class="body secondary-label">All your expenses and bills organized in one place. Mark expenses as paid when you complete the payment.</p>
 
         <table role="table" aria-labelledby="expense-list-heading">
           <thead>
             <tr>
-              <th scope="col">Expense Name</th>
+              <th scope="col">Name</th>
               <th scope="col">Amount</th>
               <th scope="col">Frequency</th>
-              <th scope="col">Payment Method</th>
+              <th scope="col">Payment</th>
               <th scope="col">Due Date</th>
-              <th scope="col">Credit Card</th>
               <th scope="col">Actions</th>
             </tr>
           </thead>
-          <tbody id="expensesBody">
-            <!-- Dynamic content populated by JavaScript -->
-          </tbody>
+          <tbody id="expensesBody"></tbody>
         </table>
 
         <div class="empty-state" style="display: none">
           <p>No expenses added yet. Add your first expense above to start tracking your spending!</p>
-        </div>
-      </section>
-
-      <section aria-labelledby="expense-categories-heading">
-        <h3 id="expense-categories-heading">Common Expense Categories</h3>
-        <p>Not sure what expenses to track? Here are the most important categories to consider:</p>
-
-        <div class="expense-categories">
-          <article>
-            <h4>Housing & Utilities</h4>
-            <p>Rent/mortgage, electricity, water, gas, internet, phone. Usually your largest expense category.</p>
-          </article>
-
-          <article>
-            <h4>Transportation</h4>
-            <p>Car payments, insurance, gas, public transit, maintenance. Track both fixed and variable costs.</p>
-          </article>
-
-          <article>
-            <h4>Food & Groceries</h4>
-            <p>Groceries, dining out, coffee, meal subscriptions. Use average amounts for better budgeting.</p>
-          </article>
-
-          <article>
-            <h4>Insurance & Healthcare</h4>
-            <p>Health, dental, life, disability insurance. Often annual or quarterly payments.</p>
-          </article>
-
-          <article>
-            <h4>Subscriptions & Entertainment</h4>
-            <p>Streaming services, gym memberships, magazines. Small amounts that add up quickly.</p>
-          </article>
-
-          <article>
-            <h4>Debt Payments</h4>
-            <p>Credit cards, student loans, personal loans. Track minimum payments and extra payments separately.</p>
-          </article>
         </div>
       </section>
     </main>

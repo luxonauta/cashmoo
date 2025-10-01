@@ -43,8 +43,8 @@ const createWindow = () => {
   const iconPath = getIconPath();
 
   const windowConfig = {
-    width: 768,
-    height: 600,
+    width: 702,
+    height: 798,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,

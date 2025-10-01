@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>CashMoo</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
     <meta name="description" content="Personal finance dashboard for tracking income, expenses, and financial goals." />
@@ -28,88 +29,132 @@
 
     <main>
       <section id="tutorial" style="display: none" aria-labelledby="tutorial-heading">
-        <h2 id="tutorial-heading">Welcome to CashMoo!</h2>
-        <p>Get started with your financial journey by following these simple steps. Each step will help you build a complete picture of your finances.</p>
+        <h2 id="tutorial-heading" class="title-2">Welcome to CashMoo!</h2>
+        <p class="body secondary-label">Get started with your financial journey by following these simple steps. Each step will help you build a complete picture of your finances.</p>
 
-        <ol>
-          <li>
-            <strong>Add your first income</strong>
-            <p>Start by recording your salary, freelance payments, or any other money you receive regularly. This helps track your total earning potential.</p>
-          </li>
-          <li>
-            <strong>Add your first expense</strong>
-            <p>Record your monthly bills, rent, groceries, or any recurring costs. This shows where your money goes each month.</p>
-          </li>
-          <li>
-            <strong>Add your credit card</strong>
-            <p>Register your credit cards with their limits and payment dates. This helps monitor your credit usage and avoid overspending.</p>
-          </li>
-          <li>
-            <strong>Set a financial goal</strong>
-            <p>Define what you want to achieve financially, like saving for vacation or building an emergency fund. Goals keep you motivated!</p>
-          </li>
-          <li>
-            <strong>Enable notifications</strong>
-            <p>Turn on reminders for bill due dates and goal milestones. Never miss a payment or lose track of your progress again.</p>
-          </li>
-        </ol>
+        <div class="list">
+          <div class="list-item">
+            <div class="list-item-content">
+              <div class="list-item-title">Add your first income</div>
+              <div class="list-item-subtitle">Start by recording your salary, freelance payments, or any other money you receive regularly</div>
+            </div>
+            <div class="list-item-accessory">1</div>
+          </div>
 
-        <p><em>Tip: Start with just one item in each category. You can always add more details later as you get comfortable with the app.</em></p>
+          <div class="list-item">
+            <div class="list-item-content">
+              <div class="list-item-title">Add your first expense</div>
+              <div class="list-item-subtitle">Record your monthly bills, rent, groceries, or any recurring costs</div>
+            </div>
+            <div class="list-item-accessory">2</div>
+          </div>
+
+          <div class="list-item">
+            <div class="list-item-content">
+              <div class="list-item-title">Add your credit card</div>
+              <div class="list-item-subtitle">Register your credit cards with their limits and payment dates</div>
+            </div>
+            <div class="list-item-accessory">3</div>
+          </div>
+
+          <div class="list-item">
+            <div class="list-item-content">
+              <div class="list-item-title">Set a financial goal</div>
+              <div class="list-item-subtitle">Define what you want to achieve financially, like saving for vacation or building an emergency fund</div>
+            </div>
+            <div class="list-item-accessory">4</div>
+          </div>
+
+          <div class="list-item">
+            <div class="list-item-content">
+              <div class="list-item-title">Enable notifications</div>
+              <div class="list-item-subtitle">Turn on reminders for bill due dates and goal milestones</div>
+            </div>
+            <div class="list-item-accessory">5</div>
+          </div>
+        </div>
+
+        <p class="footnote tertiary-label">Tip: Start with just one item in each category. You can always add more details later as you get comfortable with the app.</p>
       </section>
 
       <section id="dashboard" style="display: none" aria-labelledby="dashboard-heading">
-        <h2 id="dashboard-heading">Financial Overview</h2>
-        <p>Your complete financial picture at a glance. This dashboard shows your current financial health and helps you make informed decisions.</p>
+        <h2 id="dashboard-heading" class="title-2">Financial Overview</h2>
+        <p class="body secondary-label">Your complete financial picture at a glance. This dashboard shows your current financial health and helps you make informed decisions.</p>
 
         <article aria-labelledby="balance-heading">
-          <h3 id="balance-heading">Current Balance</h3>
-          <p>This is your net financial position - total confirmed income minus paid expenses.</p>
-          <div id="dashboardBalance" role="status" aria-live="polite">0.00</div>
+          <div class="card">
+            <div class="card-header">
+              <h3 id="balance-heading" class="card-title">Current Balance</h3>
+              <p class="card-subtitle">This is your net financial position - total confirmed income minus paid expenses</p>
+            </div>
+            <div class="card-content">
+              <div id="dashboard-balance" class="title-1" role="status" aria-live="polite">0.00</div>
+            </div>
+          </div>
         </article>
 
         <article aria-labelledby="projection-heading">
-          <h3 id="projection-heading">Monthly Projection</h3>
-          <p>Expected monthly cash flow based on all your recorded income and expenses. A positive number means you're saving money each month.</p>
-          <div id="dashboardProjection" role="status" aria-live="polite">0.00</div>
+          <div class="card">
+            <div class="card-header">
+              <h3 id="projection-heading" class="card-title">Monthly Projection</h3>
+              <p class="card-subtitle">Expected monthly cash flow based on all your recorded income and expenses. A positive number means you're saving money each month</p>
+            </div>
+            <div class="card-content">
+              <div id="dashboard-projection" class="title-1" role="status" aria-live="polite">0.00</div>
+            </div>
+          </div>
         </article>
 
         <article aria-labelledby="distribution-heading">
-          <h3 id="distribution-heading">Spending Distribution</h3>
-          <p>See how your expenses are distributed across different recurrence types. This helps identify your spending patterns.</p>
-          <table role="table" aria-labelledby="distribution-heading">
-            <thead>
-              <tr>
-                <th scope="col">Recurrence Type</th>
-                <th scope="col">Total Amount</th>
-              </tr>
-            </thead>
-            <tbody id="dashboardDistributionBody">
-              <!-- Dynamic content populated by JavaScript -->
-            </tbody>
-          </table>
+          <h3 id="distribution-heading" class="title-3">Spending Distribution</h3>
+          <p class="body secondary-label">See how your expenses are distributed across different recurrence types. This helps identify your spending patterns</p>
+
+          <div class="list">
+            <div id="dashboard-distribution-body"></div>
+          </div>
         </article>
 
         <article aria-labelledby="health-heading">
-          <h3 id="health-heading">Financial Health Indicators</h3>
-          <p>Key metrics that show how well you're managing your finances. Green numbers are good, red numbers need attention.</p>
-          <dl>
-            <dt>Saving Rate</dt>
-            <dd>Percentage of income you're saving each month. Aim for at least 20% for good financial health.</dd>
-            <dd><span id="healthSavingRate" role="status" aria-live="polite">0%</span></dd>
+          <h3 id="health-heading" class="title-3">Financial Health Indicators</h3>
+          <p class="body secondary-label">Key metrics that show how well you're managing your finances. Green numbers are good, red numbers need attention</p>
 
-            <dt>Credit Card Usage</dt>
-            <dd>Percentage of your total credit limit currently being used. Keep this below 30% for optimal credit score.</dd>
-            <dd><span id="healthCreditUse" role="status" aria-live="polite">0%</span></dd>
+          <div class="list">
+            <div class="list-item">
+              <div class="list-item-content">
+                <div class="list-item-title">Saving Rate</div>
+                <div class="list-item-subtitle">Percentage of income you're saving each month. Aim for at least 20% for good financial health</div>
+              </div>
+              <div class="list-item-accessory">
+                <span id="health-saving-rate" class="headline" role="status" aria-live="polite">0%</span>
+              </div>
+            </div>
 
-            <dt>Net Balance</dt>
-            <dd>Your overall financial position after all income and expenses are calculated.</dd>
-            <dd><span id="healthNetBalance" role="status" aria-live="polite">0.00</span></dd>
-          </dl>
+            <div class="list-item">
+              <div class="list-item-content">
+                <div class="list-item-title">Credit Card Usage</div>
+                <div class="list-item-subtitle">Percentage of your total credit limit currently being used. Keep this below 30% for optimal credit score</div>
+              </div>
+              <div class="list-item-accessory">
+                <span id="health-credit-use" class="headline" role="status" aria-live="polite">0%</span>
+              </div>
+            </div>
+
+            <div class="list-item">
+              <div class="list-item-content">
+                <div class="list-item-title">Net Balance</div>
+                <div class="list-item-subtitle">Your overall financial position after all income and expenses are calculated</div>
+              </div>
+              <div class="list-item-accessory">
+                <span id="health-net-balance" class="headline" role="status" aria-live="polite">0.00</span>
+              </div>
+            </div>
+          </div>
         </article>
 
         <article aria-labelledby="cards-status-heading">
-          <h3 id="cards-status-heading">Credit Cards Status</h3>
-          <p>Monitor your credit card usage to avoid overspending and maintain healthy credit utilization rates.</p>
+          <h3 id="cards-status-heading" class="title-3">Credit Cards Status</h3>
+          <p class="body secondary-label">Monitor your credit card usage to avoid overspending and maintain healthy credit utilization rates</p>
+
           <table role="table" aria-labelledby="cards-status-heading">
             <thead>
               <tr>
@@ -119,18 +164,17 @@
                 <th scope="col">Available Credit</th>
               </tr>
             </thead>
-            <tbody id="cardsUsageBody">
-              <!-- Dynamic content populated by JavaScript -->
-            </tbody>
+            <tbody id="cards-usage-body"></tbody>
           </table>
         </article>
 
         <article aria-labelledby="suggestions-heading">
-          <h3 id="suggestions-heading">Personalized Suggestions</h3>
-          <p>Based on your financial data, here are some recommendations to improve your financial health:</p>
-          <ul id="suggestionsList" role="list">
-            <!-- Dynamic content populated by JavaScript -->
-          </ul>
+          <h3 id="suggestions-heading" class="title-3">Personalized Suggestions</h3>
+          <p class="body secondary-label">Based on your financial data, here are some recommendations to improve your financial health</p>
+
+          <div class="list">
+            <div id="suggestions-list" role="list"></div>
+          </div>
         </article>
       </section>
     </main>

@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Financial Goals</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
     <meta name="description" content="Set and track your financial goals to build wealth and achieve your dreams." />
@@ -28,59 +29,49 @@
 
     <main>
       <section aria-labelledby="add-goal-heading">
-        <h2 id="add-goal-heading">Create a New Goal</h2>
-        <p>
+        <h2 id="add-goal-heading" class="title-2">Create a New Goal</h2>
+        <p class="body secondary-label">
           Financial goals give you direction and motivation. Whether you're saving for vacation, building an emergency fund, or planning for retirement, setting clear targets helps turn dreams into
           reality.
         </p>
 
-        <form id="goalForm">
+        <form id="goal-form">
           <fieldset>
             <legend>Goal Details</legend>
 
             <div class="form-group">
-              <label for="goalTitle">Goal name</label>
-              <input id="goalTitle" type="text" maxlength="50" required placeholder="e.g., Emergency Fund, Vacation, New Car" aria-describedby="title-help" />
-              <p id="title-help" class="help-text">Give your goal a motivating name that reminds you what you're working toward. Keep it under 50 characters.</p>
+              <label for="goal-title">Goal name</label>
+              <input id="goal-title" type="text" maxlength="50" required placeholder="e.g., Emergency Fund, Vacation, New Car" aria-describedby="goal-title-help" />
+              <p id="goal-title-help" class="help-text">Give your goal a motivating name that reminds you what you're working toward. Keep it under 50 characters.</p>
             </div>
 
             <div class="form-group">
-              <label for="goalTarget">Target amount</label>
-              <input id="goalTarget" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="target-help" />
-              <p id="target-help" class="help-text">How much money do you want to save? Enter the total amount you need to reach your goal.</p>
+              <label for="goal-target">Target amount</label>
+              <input id="goal-target" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="goal-target-help" />
+              <p id="goal-target-help" class="help-text">How much money do you want to save? Enter the total amount you need to reach your goal.</p>
             </div>
 
             <div class="form-group">
-              <label for="goalPeriod">Time frame</label>
-              <select id="goalPeriod" required aria-describedby="period-help">
+              <label for="goal-period">Time frame</label>
+              <select id="goal-period" required aria-describedby="goal-period-help">
                 <option value="monthly">Monthly goal</option>
                 <option value="annual">Annual goal</option>
               </select>
-              <p id="period-help" class="help-text">Choose whether this is something you want to achieve each month or once per year. This helps track your progress appropriately.</p>
+              <p id="goal-period-help" class="help-text">Choose whether this is something you want to achieve each month or once per year. This helps track your progress appropriately.</p>
             </div>
           </fieldset>
 
           <div class="form-actions">
-            <button type="submit">Add Goal</button>
+            <button type="submit" class="button-primary">Add Goal</button>
           </div>
 
-          <div id="goalError" role="alert" aria-live="assertive" style="color: red"></div>
+          <div id="goal-error" role="alert" aria-live="assertive" style="color: var(--color-system-red); margin-top: var(--spacing-12)"></div>
         </form>
-
-        <section aria-labelledby="goal-tips-heading">
-          <h3 id="goal-tips-heading">Goal Setting Tips</h3>
-          <ul>
-            <li><strong>Start small:</strong> Your first goal doesn't need to be huge. Even saving $100 builds the habit and confidence.</li>
-            <li><strong>Be specific:</strong> "Emergency fund of $1,000" is better than "save more money" because you know exactly when you've succeeded.</li>
-            <li><strong>Make it realistic:</strong> Set targets you can actually achieve with your current income and expenses.</li>
-            <li><strong>Monthly vs Annual:</strong> Use monthly for regular savings habits, annual for larger one-time purchases or yearly targets.</li>
-          </ul>
-        </section>
       </section>
 
       <section aria-labelledby="goals-list-heading">
-        <h2 id="goals-list-heading">Your Goals</h2>
-        <p>Track your progress and stay motivated. Each goal here represents a commitment to your financial future.</p>
+        <h2 id="goals-list-heading" class="title-2">Your Goals</h2>
+        <p class="body secondary-label">Track your progress and stay motivated. Each goal here represents a commitment to your financial future.</p>
 
         <table role="table" aria-labelledby="goals-list-heading">
           <thead>
@@ -91,40 +82,11 @@
               <th scope="col">Actions</th>
             </tr>
           </thead>
-          <tbody id="goalsBody">
-            <!-- Dynamic content populated by JavaScript -->
-          </tbody>
+          <tbody id="goals-body"></tbody>
         </table>
 
         <div class="empty-state" style="display: none">
           <p>No goals set yet. Create your first financial goal above to start building your future!</p>
-        </div>
-      </section>
-
-      <section aria-labelledby="goal-examples-heading">
-        <h3 id="goal-examples-heading">Popular Goal Ideas</h3>
-        <p>Need inspiration? Here are some common financial goals to consider:</p>
-
-        <div class="goal-examples">
-          <article>
-            <h4>Emergency Fund</h4>
-            <p>Save 3-6 months of expenses for unexpected situations like job loss or medical bills. Start with $1,000 as your first milestone.</p>
-          </article>
-
-          <article>
-            <h4>Vacation Fund</h4>
-            <p>Set aside money monthly for your dream trip. A $2,400 annual goal means saving $200 per month.</p>
-          </article>
-
-          <article>
-            <h4>Down Payment</h4>
-            <p>Saving for a house? Most lenders want 10-20% down. Calculate what you need and break it into monthly targets.</p>
-          </article>
-
-          <article>
-            <h4>Debt Freedom</h4>
-            <p>Set a goal to pay off credit cards or loans. Focus on high-interest debt first to save money on interest charges.</p>
-          </article>
         </div>
       </section>
     </main>

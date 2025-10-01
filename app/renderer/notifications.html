@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Notifications</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
     <meta name="description" content="Configure notification settings for bill reminders and financial goal alerts." />
@@ -28,60 +29,52 @@
 
     <main>
       <section aria-labelledby="notifications-heading">
-        <h2 id="notifications-heading">Configure Your Alerts</h2>
-        <p>Never miss a payment or lose track of your financial goals. Configure which notifications you want to receive to stay informed without being overwhelmed.</p>
+        <h2 id="notifications-heading" class="title-2">Configure Your Alerts</h2>
+        <p class="body secondary-label">Never miss a payment or lose track of your financial goals. Configure which notifications you want to receive to stay informed without being overwhelmed.</p>
 
-        <form id="notificationsForm">
+        <form id="notifications-form">
           <fieldset>
             <legend>Notification Preferences</legend>
 
-            <div class="form-group">
-              <label for="notificationsEnabled">
-                <input id="notificationsEnabled" type="checkbox" />
-                Enable all notifications
+            <div class="list">
+              <label for="notifications-enabled" class="list-item">
+                <div class="list-item-content">
+                  <div class="list-item-title">Enable all notifications</div>
+                  <div class="list-item-subtitle">Turn on to receive desktop notifications from CashMoo. You can always adjust specific types below.</div>
+                </div>
+                <input id="notifications-enabled" type="checkbox" />
               </label>
-              <p class="help-text">Turn on to receive desktop notifications from CashMoo. You can always adjust specific types below.</p>
-            </div>
 
-            <div class="form-group">
-              <label for="alertsDue">
-                <input id="alertsDue" type="checkbox" />
-                Bill due date reminders
+              <label for="alerts-due" class="list-item">
+                <div class="list-item-content">
+                  <div class="list-item-title">Bill due date reminders</div>
+                  <div class="list-item-subtitle">Get notified about upcoming bill payments to avoid late fees and maintain good payment history.</div>
+                </div>
+                <input id="alerts-due" type="checkbox" />
               </label>
-              <p class="help-text">Get notified about upcoming bill payments to avoid late fees and maintain good payment history.</p>
-            </div>
 
-            <div class="form-group">
-              <label for="alertsGoals">
-                <input id="alertsGoals" type="checkbox" />
-                Financial goal alerts
+              <label for="alerts-goals" class="list-item">
+                <div class="list-item-content">
+                  <div class="list-item-title">Financial goal alerts</div>
+                  <div class="list-item-subtitle">Receive updates on your progress toward financial goals and milestone achievements.</div>
+                </div>
+                <input id="alerts-goals" type="checkbox" />
               </label>
-              <p class="help-text">Receive updates on your progress toward financial goals and milestone achievements.</p>
             </div>
 
             <div class="info-section">
-              <h3>Reminder Schedule</h3>
-              <p><strong>Alert timing:</strong> 7 days in advance</p>
+              <h3 class="title-3">Reminder Schedule</h3>
+              <p class="body"><strong>Alert timing:</strong> 7 days in advance</p>
               <p class="help-text">All notifications are sent 7 days before due dates, giving you plenty of time to prepare and make payments.</p>
             </div>
           </fieldset>
 
           <div class="form-actions">
-            <button type="submit">Save Notification Settings</button>
+            <button type="submit" class="button-primary">Save Notification Settings</button>
           </div>
 
-          <div id="notificationsError" role="alert" aria-live="assertive" style="color: red"></div>
+          <div id="notifications-error" role="alert" aria-live="assertive" style="color: var(--color-system-red); margin-top: var(--spacing-12)"></div>
         </form>
-
-        <section aria-labelledby="notification-tips-heading">
-          <h3 id="notification-tips-heading">How Notifications Work</h3>
-          <ul>
-            <li><strong>Local notifications:</strong> All alerts are generated directly by CashMoo on your computer - no internet connection required.</li>
-            <li><strong>Privacy first:</strong> Your financial data never leaves your device. Notifications are created using your local data only.</li>
-            <li><strong>Bill reminders:</strong> Automatic alerts help you avoid late fees and maintain good payment history, even when you're offline.</li>
-            <li><strong>Goal tracking:</strong> Progress updates keep you motivated toward your financial objectives.</li>
-          </ul>
-        </section>
       </section>
     </main>
 

@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Credit Cards</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
     <meta name="description" content="Manage your credit cards and monitor spending to maintain healthy credit usage." />
@@ -28,70 +29,61 @@
 
     <main>
       <section aria-labelledby="add-card-heading">
-        <h2 id="add-card-heading">Add New Credit Card</h2>
-        <p>Track your credit cards to monitor spending, avoid overspending, and maintain healthy credit utilization. Knowing your limits and payment dates helps you stay on top of your finances.</p>
+        <h2 id="add-card-heading" class="title-2">Add New Credit Card</h2>
+        <p class="body secondary-label">
+          Track your credit cards to monitor spending, avoid overspending, and maintain healthy credit utilization. Knowing your limits and payment dates helps you stay on top of your finances.
+        </p>
 
-        <form id="cardForm">
+        <form id="card-form">
           <fieldset>
             <legend>Card Information</legend>
 
             <div class="form-group">
-              <label for="cardName">Card name *</label>
-              <input id="cardName" type="text" maxlength="30" required placeholder="e.g., Chase Freedom, Capital One, Main Visa" aria-describedby="card-name-help" />
+              <label for="card-name">Card name *</label>
+              <input id="card-name" type="text" maxlength="30" required placeholder="e.g., Chase Freedom, Capital One, Main Visa" aria-describedby="card-name-help" />
               <p id="card-name-help" class="help-text">Give your card a name you'll recognize easily. You can use the bank name, card type, or whatever helps you identify it.</p>
             </div>
 
             <div class="form-group">
-              <label for="cardDescription">Description</label>
-              <input id="cardDescription" type="text" maxlength="100" placeholder="Additional notes (optional)" aria-describedby="card-description-help" />
+              <label for="card-description">Description</label>
+              <input id="card-description" type="text" maxlength="100" placeholder="Additional notes (optional)" aria-describedby="card-description-help" />
               <p id="card-description-help" class="help-text">Add notes like rewards categories, special features, or what you primarily use this card for.</p>
             </div>
 
             <div class="form-group">
-              <label for="cardLimit">Credit limit *</label>
-              <input id="cardLimit" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="card-limit-help" />
+              <label for="card-limit">Credit limit *</label>
+              <input id="card-limit" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="card-limit-help" />
               <p id="card-limit-help" class="help-text">Enter your total credit limit. This helps calculate your credit utilization ratio, which affects your credit score.</p>
             </div>
           </fieldset>
 
           <fieldset>
             <legend>Billing Cycle</legend>
-            <p>These dates determine when your statement closes and when payment is due. Getting these right helps avoid late fees and interest charges.</p>
 
             <div class="form-group">
-              <label for="cardClosingDay">Statement closing day *</label>
-              <input id="cardClosingDay" type="number" min="1" max="31" required placeholder="15" aria-describedby="closing-day-help" />
-              <p id="closing-day-help" class="help-text">Day of the month when your statement closes and your balance is calculated. Usually found on your credit card statement.</p>
+              <label for="card-closing-day">Statement closing day *</label>
+              <input id="card-closing-day" type="number" min="1" max="31" required placeholder="15" aria-describedby="card-closing-day-help" />
+              <p id="card-closing-day-help" class="help-text">Day of the month when your statement closes and your balance is calculated. Usually found on your credit card statement.</p>
             </div>
 
             <div class="form-group">
-              <label for="cardPaymentDay">Payment due day *</label>
-              <input id="cardPaymentDay" type="number" min="1" max="31" required placeholder="10" aria-describedby="payment-day-help" />
-              <p id="payment-day-help" class="help-text">Day of the month when payment is due. Must be after the closing day. Missing this date results in late fees and interest charges.</p>
+              <label for="card-payment-day">Payment due day *</label>
+              <input id="card-payment-day" type="number" min="1" max="31" required placeholder="10" aria-describedby="card-payment-day-help" />
+              <p id="card-payment-day-help" class="help-text">Day of the month when payment is due. Must be after the closing day. Missing this date results in late fees and interest charges.</p>
             </div>
           </fieldset>
 
           <div class="form-actions">
-            <button id="cardSubmit" type="submit">Add Credit Card</button>
+            <button id="card-submit" type="submit" class="button-primary">Add Credit Card</button>
           </div>
 
-          <div id="cardError" role="alert" aria-live="assertive" style="color: red"></div>
+          <div id="card-error" role="alert" aria-live="assertive" style="color: var(--color-system-red); margin-top: var(--spacing-12)"></div>
         </form>
-
-        <section aria-labelledby="credit-tips-heading">
-          <h3 id="credit-tips-heading">Smart Credit Card Usage</h3>
-          <ul>
-            <li><strong>Keep utilization low:</strong> Use less than 30% of your credit limit, ideally under 10%, to maintain a good credit score.</li>
-            <li><strong>Pay on time:</strong> Late payments hurt your credit score and result in expensive fees and interest charges.</li>
-            <li><strong>Pay in full:</strong> Paying the full balance each month avoids interest charges and builds good credit history.</li>
-            <li><strong>Know your dates:</strong> Understanding when your statement closes helps you manage your credit utilization timing.</li>
-          </ul>
-        </section>
       </section>
 
       <section aria-labelledby="cards-list-heading">
-        <h2 id="cards-list-heading">Your Credit Cards</h2>
-        <p>Monitor your credit cards to maintain healthy financial habits. Check the dashboard for current usage and available credit.</p>
+        <h2 id="cards-list-heading" class="title-2">Your Credit Cards</h2>
+        <p class="body secondary-label">Monitor your credit cards to maintain healthy financial habits. Check the dashboard for current usage and available credit.</p>
 
         <table role="table" aria-labelledby="cards-list-heading">
           <thead>
@@ -103,50 +95,11 @@
               <th scope="col">Actions</th>
             </tr>
           </thead>
-          <tbody id="cardsBody">
-            <!-- Dynamic content populated by JavaScript -->
-          </tbody>
+          <tbody id="cards-body"></tbody>
         </table>
 
         <div class="empty-state" style="display: none">
           <p>No credit cards added yet. Add your first card above to start monitoring your credit usage!</p>
-        </div>
-      </section>
-
-      <section aria-labelledby="credit-health-heading">
-        <h3 id="credit-health-heading">Credit Health Guidelines</h3>
-        <p>Follow these guidelines to build and maintain excellent credit:</p>
-
-        <div class="credit-guidelines">
-          <article>
-            <h4>Credit Utilization</h4>
-            <p>Keep total credit usage below 30% of your limits. Lower is better - under 10% is ideal for excellent credit scores.</p>
-          </article>
-
-          <article>
-            <h4>Payment History</h4>
-            <p>Pay at least the minimum on time, every time. Payment history is 35% of your credit score - the most important factor.</p>
-          </article>
-
-          <article>
-            <h4>Statement Timing</h4>
-            <p>Your balance when the statement closes is what gets reported to credit bureaus, affecting your utilization ratio.</p>
-          </article>
-
-          <article>
-            <h4>Multiple Cards</h4>
-            <p>Having multiple cards can help your credit mix and available credit, but only if you can manage them responsibly.</p>
-          </article>
-        </div>
-
-        <div class="warning-box">
-          <h4>Important Reminders</h4>
-          <ul>
-            <li>Credit cards are a tool for building credit and managing cash flow, not for spending money you don't have</li>
-            <li>Interest rates on credit cards are typically very high - avoid carrying balances when possible</li>
-            <li>Missing payments can result in late fees, higher interest rates, and damage to your credit score</li>
-            <li>Only use credit cards if you have a plan to pay them off responsibly</li>
-          </ul>
         </div>
       </section>
     </main>

@@ -4,10 +4,6 @@
  */
 
 /**
- * Utility functions
- */
-
-/**
  * Quick selector function
  * @param {string} selector - CSS selector string
  * @returns {Element|null} Selected DOM element
@@ -20,15 +16,16 @@ const q = (selector) => document.querySelector(selector);
  * @param {string} text - Error message text
  */
 const showError = (node, text) => {
-  node.textContent = text || "";
+  if (node) node.textContent = text || "";
 };
 
 /**
  * Fills a select element with options
  * @param {Element} element - Select element to populate
- * @param {Array} optionsList - Array of option objects with value and label
+ * @param {Array<{value: string, label: string}>} optionsList - Array of option objects
  */
 const fillSelect = (element, optionsList) => {
+  if (!element) return;
   element.innerHTML = "";
   optionsList.forEach((option) => {
     const optElement = document.createElement("option");
@@ -41,7 +38,7 @@ const fillSelect = (element, optionsList) => {
 /**
  * Creates a table cell with text content
  * @param {string} text - Text content for the cell
- * @returns {Element} Table cell element
+ * @returns {HTMLTableCellElement} Table cell element
  */
 const createTableCell = (text) => {
   const cell = document.createElement("td");
@@ -53,17 +50,19 @@ const createTableCell = (text) => {
  * Creates a button element with text and click handler
  * @param {string} text - Button text
  * @param {Function} clickHandler - Click event handler
- * @returns {Element} Button element
+ * @returns {HTMLButtonElement} Button element
  */
 const createButton = (text, clickHandler) => {
   const button = document.createElement("button");
   button.textContent = text;
+  button.type = "button";
+  button.className = "button-secondary";
   button.addEventListener("click", clickHandler);
   return button;
 };
 
 /**
- * Configuration constants
+ * Configuration constants for form options
  */
 const OPTIONS = {
   recurrence: [
@@ -116,17 +115,13 @@ const editingState = {
 };
 
 /**
- * Recurrence helper functions
- */
-
-/**
  * Builds recurrence object based on type and parameters
- * @param {string} type - Recurrence type
+ * @param {string} type - Recurrence type (single, weekly, monthly, annual)
  * @param {Object} params - Recurrence parameters
- * @param {number} params.weekday - Weekday for weekly recurrence
- * @param {number} params.day - Day for monthly recurrence
- * @param {number} params.month - Month for annual recurrence
- * @param {number} params.dayAnnual - Day for annual recurrence
+ * @param {number} params.weekday - Weekday for weekly recurrence (1-7)
+ * @param {number} params.day - Day for monthly recurrence (1-30)
+ * @param {number} params.month - Month for annual recurrence (1-12)
+ * @param {number} params.dayAnnual - Day for annual recurrence (1-30)
  * @returns {Object} Recurrence configuration object
  */
 const buildRecurrence = (type, { weekday, day, month, dayAnnual }) => {
@@ -147,13 +142,14 @@ const buildRecurrence = (type, { weekday, day, month, dayAnnual }) => {
  * @param {string} prefix - Form field prefix (expense/income)
  */
 const toggleRecurrenceFields = (prefix) => {
-  const recurrenceType = q(`#${prefix}Recurrence`).value;
+  const recurrenceType = q(`#${prefix}-recurrence`)?.value;
+  if (!recurrenceType) return;
 
   const fieldMappings = {
-    single: `#${prefix}DueDateWrap, #${prefix}ReceiveDateWrap`,
-    weekly: `#${prefix}WeeklyWrap`,
-    monthly: `#${prefix}MonthlyWrap`,
-    annual: `#${prefix}AnnualWrap`
+    single: `#${prefix}-due-date-wrap, #${prefix}-receive-date-wrap`,
+    weekly: `#${prefix}-weekly-wrap`,
+    monthly: `#${prefix}-monthly-wrap`,
+    annual: `#${prefix}-annual-wrap`
   };
 
   Object.entries(fieldMappings).forEach(([type, selector]) => {
@@ -168,7 +164,7 @@ const toggleRecurrenceFields = (prefix) => {
 };
 
 /**
- * Dashboard functions
+ * Dashboard Functions
  */
 
 /**
@@ -191,8 +187,10 @@ const loadDashboard = async () => {
  * Shows empty dashboard with tutorial
  */
 const showEmptyDashboard = () => {
-  q("#tutorial").style.display = "block";
-  q("#dashboard").style.display = "none";
+  const tutorial = q("#tutorial");
+  const dashboard = q("#dashboard");
+  if (tutorial) tutorial.style.display = "block";
+  if (dashboard) dashboard.style.display = "none";
 };
 
 /**
@@ -200,8 +198,10 @@ const showEmptyDashboard = () => {
  * @param {Object} data - Dashboard data
  */
 const showPopulatedDashboard = (data) => {
-  q("#tutorial").style.display = "none";
-  q("#dashboard").style.display = "block";
+  const tutorial = q("#tutorial");
+  const dashboard = q("#dashboard");
+  if (tutorial) tutorial.style.display = "none";
+  if (dashboard) dashboard.style.display = "block";
 
   updateFinancialSummary(data);
   updateDistributionTable(data.distribution);
@@ -215,57 +215,94 @@ const showPopulatedDashboard = (data) => {
  * @param {Object} data - Dashboard data
  */
 const updateFinancialSummary = (data) => {
-  q("#dashboardBalance").textContent = data.balance.toFixed(2);
-  q("#dashboardProjection").textContent = data.monthlyProjection.toFixed(2);
+  const balance = q("#dashboard-balance");
+  const projection = q("#dashboard-projection");
+  if (balance) balance.textContent = data.balance.toFixed(2);
+  if (projection) projection.textContent = data.monthlyProjection.toFixed(2);
 };
 
 /**
  * Updates distribution table
- * @param {Array} distribution - Distribution data
+ * @param {Array<{type: string, amount: number}>} distribution - Distribution data
  */
 const updateDistributionTable = (distribution) => {
-  const tableBody = q("#dashboardDistributionBody");
+  const tableBody = q("#dashboard-distribution-body");
+  if (!tableBody) return;
+
   tableBody.innerHTML = "";
 
   distribution.forEach((item) => {
-    const row = document.createElement("tr");
-    row.appendChild(createTableCell(item.type));
-    row.appendChild(createTableCell(item.amount.toFixed(2)));
-    tableBody.appendChild(row);
+    const listItem = document.createElement("div");
+    listItem.className = "list-item";
+
+    const content = document.createElement("div");
+    content.className = "list-item-content";
+
+    const title = document.createElement("div");
+    title.className = "list-item-title";
+    title.textContent = item.type;
+
+    const accessory = document.createElement("div");
+    accessory.className = "list-item-accessory";
+    accessory.textContent = item.amount.toFixed(2);
+
+    content.appendChild(title);
+    listItem.appendChild(content);
+    listItem.appendChild(accessory);
+    tableBody.appendChild(listItem);
   });
 };
 
 /**
  * Updates health indicators section
  * @param {Object} health - Health indicators data
+ * @param {number} health.savingRate - Saving rate percentage
+ * @param {number} health.creditUse - Credit usage percentage
+ * @param {number} health.netBalance - Net balance amount
  */
 const updateHealthIndicators = (health) => {
-  q("#healthSavingRate").textContent = `${health.savingRate}%`;
-  q("#healthCreditUse").textContent = `${health.creditUse}%`;
-  q("#healthNetBalance").textContent = health.netBalance.toFixed(2);
+  const savingRate = q("#health-saving-rate");
+  const creditUse = q("#health-credit-use");
+  const netBalance = q("#health-net-balance");
+
+  if (savingRate) savingRate.textContent = `${health.savingRate}%`;
+  if (creditUse) creditUse.textContent = `${health.creditUse}%`;
+  if (netBalance) netBalance.textContent = health.netBalance.toFixed(2);
 };
 
 /**
  * Updates suggestions list
- * @param {Array} suggestions - Array of suggestion strings
+ * @param {Array<string>} suggestions - Array of suggestion strings
  */
 const updateSuggestionsList = (suggestions) => {
-  const suggestionsList = q("#suggestionsList");
+  const suggestionsList = q("#suggestions-list");
+  if (!suggestionsList) return;
+
   suggestionsList.innerHTML = "";
 
   suggestions.forEach((suggestion) => {
-    const listItem = document.createElement("li");
-    listItem.textContent = suggestion;
+    const listItem = document.createElement("div");
+    listItem.className = "list-item";
+
+    const content = document.createElement("div");
+    content.className = "list-item-content";
+
+    const title = document.createElement("div");
+    title.className = "list-item-title";
+    title.textContent = suggestion;
+
+    content.appendChild(title);
+    listItem.appendChild(content);
     suggestionsList.appendChild(listItem);
   });
 };
 
 /**
  * Updates cards usage table
- * @param {Array} cardsUsage - Cards usage data
+ * @param {Array<Object>} cardsUsage - Cards usage data
  */
 const updateCardsUsageTable = (cardsUsage) => {
-  const tableBody = q("#cardsUsageBody");
+  const tableBody = q("#cards-usage-body");
   if (!tableBody) return;
 
   tableBody.innerHTML = "";
@@ -280,17 +317,20 @@ const updateCardsUsageTable = (cardsUsage) => {
 };
 
 /**
- * Setup functions
+ * Setup Functions
  */
 
 /**
  * Initializes setup form
  */
 const initSetup = () => {
-  fillSelect(q("#setupCurrency"), OPTIONS.currencies);
-  fillSelect(q("#setupDateFormat"), OPTIONS.dateFormats);
+  fillSelect(q("#setup-currency"), OPTIONS.currencies);
+  fillSelect(q("#setup-date-format"), OPTIONS.dateFormats);
 
-  q("#setupForm").addEventListener("submit", handleSetupSubmit);
+  const form = q("#setup-form");
+  if (form) {
+    form.addEventListener("submit", handleSetupSubmit);
+  }
 };
 
 /**
@@ -301,16 +341,16 @@ const handleSetupSubmit = async (event) => {
   event.preventDefault();
 
   const payload = {
-    userName: q("#setupUserName").value.trim(),
-    currency: q("#setupCurrency").value,
-    dateFormat: q("#setupDateFormat").value,
-    notificationsEnabled: q("#setupNotifications").checked
+    userName: q("#setup-user-name")?.value.trim(),
+    currency: q("#setup-currency")?.value,
+    dateFormat: q("#setup-date-format")?.value,
+    notificationsEnabled: q("#setup-notifications")?.checked
   };
 
   const response = await window.cashmoo.setupSave(payload);
 
   if (!response.ok) {
-    showError(q("#setupError"), response.error);
+    showError(q("#setup-error"), response.error);
     return;
   }
 
@@ -318,7 +358,7 @@ const handleSetupSubmit = async (event) => {
 };
 
 /**
- * Expense management functions
+ * Expense Management Functions
  */
 
 /**
@@ -328,23 +368,29 @@ const initExpenses = async () => {
   setupExpenseForm();
   await fillExpensesTable();
 
-  q("#expenseForm").addEventListener("submit", handleExpenseSubmit);
+  const form = q("#expense-form");
+  if (form) {
+    form.addEventListener("submit", handleExpenseSubmit);
+  }
 };
 
 /**
  * Sets up expense form fields and event listeners
  */
 const setupExpenseForm = () => {
-  fillSelect(q("#expenseRecurrence"), OPTIONS.recurrence);
-  fillSelect(q("#expenseWeekday"), OPTIONS.weekdays);
-  fillSelect(q("#expenseMonth"), OPTIONS.months);
+  fillSelect(q("#expense-recurrence"), OPTIONS.recurrence);
+  fillSelect(q("#expense-weekday"), OPTIONS.weekdays);
+  fillSelect(q("#expense-month"), OPTIONS.months);
 
   fillExpenseCardsSelect();
   toggleExpenseRecurrenceFields();
   toggleExpensePaymentFields();
 
-  q("#expenseRecurrence").addEventListener("change", toggleExpenseRecurrenceFields);
-  q("#expensePayment").addEventListener("change", toggleExpensePaymentFields);
+  const recurrence = q("#expense-recurrence");
+  const payment = q("#expense-payment");
+
+  if (recurrence) recurrence.addEventListener("change", toggleExpenseRecurrenceFields);
+  if (payment) payment.addEventListener("change", toggleExpensePaymentFields);
 };
 
 /**
@@ -358,8 +404,11 @@ const toggleExpenseRecurrenceFields = () => {
  * Toggles expense payment method fields visibility
  */
 const toggleExpensePaymentFields = () => {
-  const paymentMethod = q("#expensePayment").value;
-  q("#expenseCardWrap").style.display = paymentMethod === "card" ? "block" : "none";
+  const paymentMethod = q("#expense-payment")?.value;
+  const cardWrap = q("#expense-card-wrap");
+  if (cardWrap) {
+    cardWrap.style.display = paymentMethod === "card" ? "block" : "none";
+  }
 };
 
 /**
@@ -367,7 +416,9 @@ const toggleExpensePaymentFields = () => {
  */
 const fillExpenseCardsSelect = async () => {
   const response = await window.cashmoo.listCards();
-  const selectElement = q("#expenseCard");
+  const selectElement = q("#expense-card");
+  if (!selectElement) return;
+
   selectElement.innerHTML = "";
 
   response.items.forEach((card) => {
@@ -389,7 +440,7 @@ const handleExpenseSubmit = async (event) => {
   const response = editingState.expenseId ? await window.cashmoo.updateExpense({ id: editingState.expenseId, update: formData }) : await window.cashmoo.addExpense(formData);
 
   if (!response.ok) {
-    showError(q("#expenseError"), response.error);
+    showError(q("#expense-error"), response.error);
     return;
   }
 
@@ -402,22 +453,22 @@ const handleExpenseSubmit = async (event) => {
  * @returns {Object} Expense form data
  */
 const collectExpenseFormData = () => {
-  const recurrenceType = q("#expenseRecurrence").value;
+  const recurrenceType = q("#expense-recurrence")?.value;
   const recurrence = buildRecurrence(recurrenceType, {
-    weekday: parseInt(q("#expenseWeekday").value, 10),
-    day: parseInt(q("#expenseDay").value, 10),
-    month: parseInt(q("#expenseMonth").value, 10),
-    dayAnnual: parseInt(q("#expenseDayAnnual").value, 10)
+    weekday: parseInt(q("#expense-weekday")?.value, 10),
+    day: parseInt(q("#expense-day")?.value, 10),
+    month: parseInt(q("#expense-month")?.value, 10),
+    dayAnnual: parseInt(q("#expense-day-annual")?.value, 10)
   });
 
   return {
-    name: q("#expenseName").value.trim(),
-    description: q("#expenseDescription").value.trim(),
-    amount: q("#expenseAmount").value.trim(),
+    name: q("#expense-name")?.value.trim(),
+    description: q("#expense-description")?.value.trim(),
+    amount: q("#expense-amount")?.value.trim(),
     recurrence,
-    paymentMethod: q("#expensePayment").value,
-    dueDate: recurrenceType === "single" ? q("#expenseDueDate").value : undefined,
-    cardId: q("#expensePayment").value === "card" ? q("#expenseCard").value : undefined
+    paymentMethod: q("#expense-payment")?.value,
+    dueDate: recurrenceType === "single" ? q("#expense-due-date")?.value : undefined,
+    cardId: q("#expense-payment")?.value === "card" ? q("#expense-card")?.value : undefined
   };
 };
 
@@ -426,8 +477,12 @@ const collectExpenseFormData = () => {
  */
 const resetExpenseForm = () => {
   editingState.expenseId = null;
-  q("#expenseSubmit").textContent = "Add expense";
-  q("#expenseForm").reset();
+  const submit = q("#expense-submit");
+  if (submit) submit.textContent = "Add Expense";
+
+  const form = q("#expense-form");
+  if (form) form.reset();
+
   setupExpenseForm();
 };
 
@@ -436,7 +491,9 @@ const resetExpenseForm = () => {
  */
 const fillExpensesTable = async () => {
   const response = await window.cashmoo.listExpenses();
-  const tableBody = q("#expensesBody");
+  const tableBody = q("#expenses-body");
+  if (!tableBody) return;
+
   tableBody.innerHTML = "";
 
   response.items.forEach((expense) => {
@@ -448,7 +505,7 @@ const fillExpensesTable = async () => {
 /**
  * Creates a table row for an expense
  * @param {Object} expense - Expense data
- * @returns {Element} Table row element
+ * @returns {HTMLTableRowElement} Table row element
  */
 const createExpenseTableRow = (expense) => {
   const row = document.createElement("tr");
@@ -458,7 +515,6 @@ const createExpenseTableRow = (expense) => {
   row.appendChild(createTableCell(expense.recurrence.type));
   row.appendChild(createTableCell(expense.paymentMethod));
   row.appendChild(createTableCell(expense.recurrence.type === "single" ? expense.dueDate : "-"));
-  row.appendChild(createTableCell(expense.paymentMethod === "card" ? expense.cardId : "-"));
 
   const actionsCell = createExpenseActionButtons(expense);
   row.appendChild(actionsCell);
@@ -469,7 +525,7 @@ const createExpenseTableRow = (expense) => {
 /**
  * Creates action buttons for expense row
  * @param {Object} expense - Expense data
- * @returns {Element} Table cell with action buttons
+ * @returns {HTMLTableCellElement} Table cell with action buttons
  */
 const createExpenseActionButtons = (expense) => {
   const cell = document.createElement("td");
@@ -485,7 +541,7 @@ const createExpenseActionButtons = (expense) => {
   const deleteButton = createButton("Delete", async () => {
     const response = await window.cashmoo.removeExpense({ id: expense.id });
     if (!response.ok) {
-      showError(q("#expenseError"), response.error);
+      showError(q("#expense-error"), response.error);
     }
     fillExpensesTable();
   });
@@ -504,22 +560,30 @@ const createExpenseActionButtons = (expense) => {
 const editExpense = (expense) => {
   editingState.expenseId = expense.id;
 
-  q("#expenseName").value = expense.name || "";
-  q("#expenseDescription").value = expense.description || "";
-  q("#expenseAmount").value = expense.amount || "";
-  q("#expenseRecurrence").value = expense.recurrence.type;
+  const nameEl = q("#expense-name");
+  const descEl = q("#expense-description");
+  const amountEl = q("#expense-amount");
+  const recurrenceEl = q("#expense-recurrence");
+  const paymentEl = q("#expense-payment");
+  const submitEl = q("#expense-submit");
+
+  if (nameEl) nameEl.value = expense.name || "";
+  if (descEl) descEl.value = expense.description || "";
+  if (amountEl) amountEl.value = expense.amount || "";
+  if (recurrenceEl) recurrenceEl.value = expense.recurrence.type;
 
   toggleExpenseRecurrenceFields();
   populateExpenseRecurrenceFields(expense);
 
-  q("#expensePayment").value = expense.paymentMethod;
+  if (paymentEl) paymentEl.value = expense.paymentMethod;
   toggleExpensePaymentFields();
 
   if (expense.paymentMethod === "card") {
-    q("#expenseCard").value = expense.cardId || "";
+    const cardEl = q("#expense-card");
+    if (cardEl) cardEl.value = expense.cardId || "";
   }
 
-  q("#expenseSubmit").textContent = "Save changes";
+  if (submitEl) submitEl.textContent = "Save changes";
 };
 
 /**
@@ -530,24 +594,33 @@ const populateExpenseRecurrenceFields = (expense) => {
   const { recurrence } = expense;
 
   switch (recurrence.type) {
-    case "single":
-      q("#expenseDueDate").value = expense.dueDate || "";
+    case "single": {
+      const dueDateEl = q("#expense-due-date");
+      if (dueDateEl) dueDateEl.value = expense.dueDate || "";
       break;
-    case "weekly":
-      q("#expenseWeekday").value = recurrence.weekday;
+    }
+    case "weekly": {
+      const weekdayEl = q("#expense-weekday");
+      if (weekdayEl) weekdayEl.value = recurrence.weekday;
       break;
-    case "monthly":
-      q("#expenseDay").value = recurrence.day;
+    }
+    case "monthly": {
+      const dayEl = q("#expense-day");
+      if (dayEl) dayEl.value = recurrence.day;
       break;
-    case "annual":
-      q("#expenseMonth").value = recurrence.month;
-      q("#expenseDayAnnual").value = recurrence.day;
+    }
+    case "annual": {
+      const monthEl = q("#expense-month");
+      const dayAnnualEl = q("#expense-day-annual");
+      if (monthEl) monthEl.value = recurrence.month;
+      if (dayAnnualEl) dayAnnualEl.value = recurrence.day;
       break;
+    }
   }
 };
 
 /**
- * Income management functions
+ * Income Management Functions
  */
 
 /**
@@ -557,19 +630,26 @@ const initIncomes = async () => {
   setupIncomeForm();
   await fillIncomesTable();
 
-  q("#incomeForm").addEventListener("submit", handleIncomeSubmit);
+  const form = q("#income-form");
+  if (form) {
+    form.addEventListener("submit", handleIncomeSubmit);
+  }
 };
 
 /**
  * Sets up income form fields and event listeners
  */
 const setupIncomeForm = () => {
-  fillSelect(q("#incomeRecurrence"), OPTIONS.recurrence);
-  fillSelect(q("#incomeWeekday"), OPTIONS.weekdays);
-  fillSelect(q("#incomeMonth"), OPTIONS.months);
+  fillSelect(q("#income-recurrence"), OPTIONS.recurrence);
+  fillSelect(q("#income-weekday"), OPTIONS.weekdays);
+  fillSelect(q("#income-month"), OPTIONS.months);
 
   toggleIncomeRecurrenceFields();
-  q("#incomeRecurrence").addEventListener("change", toggleIncomeRecurrenceFields);
+
+  const recurrence = q("#income-recurrence");
+  if (recurrence) {
+    recurrence.addEventListener("change", toggleIncomeRecurrenceFields);
+  }
 };
 
 /**
@@ -590,7 +670,7 @@ const handleIncomeSubmit = async (event) => {
   const response = editingState.incomeId ? await window.cashmoo.updateIncome({ id: editingState.incomeId, update: formData }) : await window.cashmoo.addIncome(formData);
 
   if (!response.ok) {
-    showError(q("#incomeError"), response.error);
+    showError(q("#income-error"), response.error);
     return;
   }
 
@@ -603,21 +683,21 @@ const handleIncomeSubmit = async (event) => {
  * @returns {Object} Income form data
  */
 const collectIncomeFormData = () => {
-  const recurrenceType = q("#incomeRecurrence").value;
+  const recurrenceType = q("#income-recurrence")?.value;
   const recurrence = buildRecurrence(recurrenceType, {
-    weekday: parseInt(q("#incomeWeekday").value, 10),
-    day: parseInt(q("#incomeDay").value, 10),
-    month: parseInt(q("#incomeMonth").value, 10),
-    dayAnnual: parseInt(q("#incomeDayAnnual").value, 10)
+    weekday: parseInt(q("#income-weekday")?.value, 10),
+    day: parseInt(q("#income-day")?.value, 10),
+    month: parseInt(q("#income-month")?.value, 10),
+    dayAnnual: parseInt(q("#income-day-annual")?.value, 10)
   });
 
   return {
-    name: q("#incomeName").value.trim(),
-    description: q("#incomeDescription").value.trim(),
-    company: q("#incomeCompany").value.trim(),
-    amount: q("#incomeAmount").value.trim(),
+    name: q("#income-name")?.value.trim(),
+    description: q("#income-description")?.value.trim(),
+    company: q("#income-company")?.value.trim(),
+    amount: q("#income-amount")?.value.trim(),
     recurrence,
-    receiveDate: recurrenceType === "single" ? q("#incomeReceiveDate").value : undefined
+    receiveDate: recurrenceType === "single" ? q("#income-receive-date")?.value : undefined
   };
 };
 
@@ -626,8 +706,12 @@ const collectIncomeFormData = () => {
  */
 const resetIncomeForm = () => {
   editingState.incomeId = null;
-  q("#incomeSubmit").textContent = "Add income";
-  q("#incomeForm").reset();
+  const submit = q("#income-submit");
+  if (submit) submit.textContent = "Add income";
+
+  const form = q("#income-form");
+  if (form) form.reset();
+
   setupIncomeForm();
 };
 
@@ -636,7 +720,9 @@ const resetIncomeForm = () => {
  */
 const fillIncomesTable = async () => {
   const response = await window.cashmoo.listIncomes();
-  const tableBody = q("#incomesBody");
+  const tableBody = q("#incomes-body");
+  if (!tableBody) return;
+
   tableBody.innerHTML = "";
 
   response.items.forEach((income) => {
@@ -648,7 +734,7 @@ const fillIncomesTable = async () => {
 /**
  * Creates a table row for an income
  * @param {Object} income - Income data
- * @returns {Element} Table row element
+ * @returns {HTMLTableRowElement} Table row element
  */
 const createIncomeTableRow = (income) => {
   const row = document.createElement("tr");
@@ -689,7 +775,7 @@ const formatIncomeSchedule = (income) => {
 /**
  * Creates action buttons for income row
  * @param {Object} income - Income data
- * @returns {Element} Table cell with action buttons
+ * @returns {HTMLTableCellElement} Table cell with action buttons
  */
 const createIncomeActionButtons = (income) => {
   const cell = document.createElement("td");
@@ -705,7 +791,7 @@ const createIncomeActionButtons = (income) => {
   const deleteButton = createButton("Delete", async () => {
     const response = await window.cashmoo.removeIncome({ id: income.id });
     if (!response.ok) {
-      showError(q("#incomeError"), response.error);
+      showError(q("#income-error"), response.error);
     }
     fillIncomesTable();
   });
@@ -724,16 +810,23 @@ const createIncomeActionButtons = (income) => {
 const editIncome = (income) => {
   editingState.incomeId = income.id;
 
-  q("#incomeName").value = income.name || "";
-  q("#incomeDescription").value = income.description || "";
-  q("#incomeCompany").value = income.company || "";
-  q("#incomeAmount").value = income.amount || "";
-  q("#incomeRecurrence").value = income.recurrence.type;
+  const nameEl = q("#income-name");
+  const descEl = q("#income-description");
+  const companyEl = q("#income-company");
+  const amountEl = q("#income-amount");
+  const recurrenceEl = q("#income-recurrence");
+  const submitEl = q("#income-submit");
+
+  if (nameEl) nameEl.value = income.name || "";
+  if (descEl) descEl.value = income.description || "";
+  if (companyEl) companyEl.value = income.company || "";
+  if (amountEl) amountEl.value = income.amount || "";
+  if (recurrenceEl) recurrenceEl.value = income.recurrence.type;
 
   toggleIncomeRecurrenceFields();
   populateIncomeRecurrenceFields(income);
 
-  q("#incomeSubmit").textContent = "Save changes";
+  if (submitEl) submitEl.textContent = "Save changes";
 };
 
 /**
@@ -744,24 +837,33 @@ const populateIncomeRecurrenceFields = (income) => {
   const { recurrence } = income;
 
   switch (recurrence.type) {
-    case "single":
-      q("#incomeReceiveDate").value = income.receiveDate || "";
+    case "single": {
+      const receiveDateEl = q("#income-receive-date");
+      if (receiveDateEl) receiveDateEl.value = income.receiveDate || "";
       break;
-    case "weekly":
-      q("#incomeWeekday").value = recurrence.weekday;
+    }
+    case "weekly": {
+      const weekdayEl = q("#income-weekday");
+      if (weekdayEl) weekdayEl.value = recurrence.weekday;
       break;
-    case "monthly":
-      q("#incomeDay").value = recurrence.day;
+    }
+    case "monthly": {
+      const dayEl = q("#income-day");
+      if (dayEl) dayEl.value = recurrence.day;
       break;
-    case "annual":
-      q("#incomeMonth").value = recurrence.month;
-      q("#incomeDayAnnual").value = recurrence.day;
+    }
+    case "annual": {
+      const monthEl = q("#income-month");
+      const dayAnnualEl = q("#income-day-annual");
+      if (monthEl) monthEl.value = recurrence.month;
+      if (dayAnnualEl) dayAnnualEl.value = recurrence.day;
       break;
+    }
   }
 };
 
 /**
- * Card management functions
+ * Card Management Functions
  */
 
 /**
@@ -769,7 +871,11 @@ const populateIncomeRecurrenceFields = (income) => {
  */
 const initCards = async () => {
   await fillCardsTable();
-  q("#cardForm").addEventListener("submit", handleCardSubmit);
+
+  const form = q("#card-form");
+  if (form) {
+    form.addEventListener("submit", handleCardSubmit);
+  }
 };
 
 /**
@@ -783,7 +889,7 @@ const handleCardSubmit = async (event) => {
   const response = editingState.cardId ? await window.cashmoo.updateCard({ id: editingState.cardId, update: formData }) : await window.cashmoo.addCard(formData);
 
   if (!response.ok) {
-    showError(q("#cardError"), response.error);
+    showError(q("#card-error"), response.error);
     return;
   }
 
@@ -796,11 +902,11 @@ const handleCardSubmit = async (event) => {
  * @returns {Object} Card form data
  */
 const collectCardFormData = () => ({
-  name: q("#cardName").value.trim(),
-  description: q("#cardDescription").value.trim(),
-  limit: q("#cardLimit").value.trim(),
-  closingDay: parseInt(q("#cardClosingDay").value, 10),
-  paymentDay: parseInt(q("#cardPaymentDay").value, 10)
+  name: q("#card-name")?.value.trim(),
+  description: q("#card-description")?.value.trim(),
+  limit: q("#card-limit")?.value.trim(),
+  closingDay: parseInt(q("#card-closing-day")?.value, 10),
+  paymentDay: parseInt(q("#card-payment-day")?.value, 10)
 });
 
 /**
@@ -808,8 +914,11 @@ const collectCardFormData = () => ({
  */
 const resetCardForm = () => {
   editingState.cardId = null;
-  q("#cardSubmit").textContent = "Add card";
-  q("#cardForm").reset();
+  const submit = q("#card-submit");
+  if (submit) submit.textContent = "Add card";
+
+  const form = q("#card-form");
+  if (form) form.reset();
 };
 
 /**
@@ -817,7 +926,9 @@ const resetCardForm = () => {
  */
 const fillCardsTable = async () => {
   const response = await window.cashmoo.listCards();
-  const tableBody = q("#cardsBody");
+  const tableBody = q("#cards-body");
+  if (!tableBody) return;
+
   tableBody.innerHTML = "";
 
   response.items.forEach((card) => {
@@ -829,7 +940,7 @@ const fillCardsTable = async () => {
 /**
  * Creates a table row for a card
  * @param {Object} card - Card data
- * @returns {Element} Table row element
+ * @returns {HTMLTableRowElement} Table row element
  */
 const createCardTableRow = (card) => {
   const row = document.createElement("tr");
@@ -848,7 +959,7 @@ const createCardTableRow = (card) => {
 /**
  * Creates action buttons for card row
  * @param {Object} card - Card data
- * @returns {Element} Table cell with action buttons
+ * @returns {HTMLTableCellElement} Table cell with action buttons
  */
 const createCardActionButtons = (card) => {
   const cell = document.createElement("td");
@@ -858,7 +969,7 @@ const createCardActionButtons = (card) => {
   const deleteButton = createButton("Delete", async () => {
     const response = await window.cashmoo.removeCard({ id: card.id });
     if (!response.ok) {
-      showError(q("#cardError"), response.error);
+      showError(q("#card-error"), response.error);
     }
     fillCardsTable();
   });
@@ -876,17 +987,24 @@ const createCardActionButtons = (card) => {
 const editCard = (card) => {
   editingState.cardId = card.id;
 
-  q("#cardName").value = card.name || "";
-  q("#cardDescription").value = card.description || "";
-  q("#cardLimit").value = card.limit || "";
-  q("#cardClosingDay").value = card.closingDay || "";
-  q("#cardPaymentDay").value = card.paymentDay || "";
+  const nameEl = q("#card-name");
+  const descEl = q("#card-description");
+  const limitEl = q("#card-limit");
+  const closingEl = q("#card-closing-day");
+  const paymentEl = q("#card-payment-day");
+  const submitEl = q("#card-submit");
 
-  q("#cardSubmit").textContent = "Save changes";
+  if (nameEl) nameEl.value = card.name || "";
+  if (descEl) descEl.value = card.description || "";
+  if (limitEl) limitEl.value = card.limit || "";
+  if (closingEl) closingEl.value = card.closingDay || "";
+  if (paymentEl) paymentEl.value = card.paymentDay || "";
+
+  if (submitEl) submitEl.textContent = "Save changes";
 };
 
 /**
- * Goal management functions
+ * Goal Management Functions
  */
 
 /**
@@ -894,7 +1012,11 @@ const editCard = (card) => {
  */
 const initGoals = async () => {
   await fillGoalsTable();
-  q("#goalForm").addEventListener("submit", handleGoalSubmit);
+
+  const form = q("#goal-form");
+  if (form) {
+    form.addEventListener("submit", handleGoalSubmit);
+  }
 };
 
 /**
@@ -908,11 +1030,13 @@ const handleGoalSubmit = async (event) => {
   const response = await window.cashmoo.addGoal(formData);
 
   if (!response.ok) {
-    showError(q("#goalError"), response.error);
+    showError(q("#goal-error"), response.error);
     return;
   }
 
-  q("#goalForm").reset();
+  const form = q("#goal-form");
+  if (form) form.reset();
+
   await fillGoalsTable();
 };
 
@@ -921,9 +1045,9 @@ const handleGoalSubmit = async (event) => {
  * @returns {Object} Goal form data
  */
 const collectGoalFormData = () => ({
-  title: q("#goalTitle").value.trim(),
-  target: q("#goalTarget").value.trim(),
-  period: q("#goalPeriod").value
+  title: q("#goal-title")?.value.trim(),
+  target: q("#goal-target")?.value.trim(),
+  period: q("#goal-period")?.value
 });
 
 /**
@@ -931,7 +1055,9 @@ const collectGoalFormData = () => ({
  */
 const fillGoalsTable = async () => {
   const response = await window.cashmoo.listGoals();
-  const tableBody = q("#goalsBody");
+  const tableBody = q("#goals-body");
+  if (!tableBody) return;
+
   tableBody.innerHTML = "";
 
   response.items.forEach((goal) => {
@@ -943,7 +1069,7 @@ const fillGoalsTable = async () => {
 /**
  * Creates a table row for a goal
  * @param {Object} goal - Goal data
- * @returns {Element} Table row element
+ * @returns {HTMLTableRowElement} Table row element
  */
 const createGoalTableRow = (goal) => {
   const row = document.createElement("tr");
@@ -965,7 +1091,7 @@ const createGoalTableRow = (goal) => {
 };
 
 /**
- * Notification settings functions
+ * Notification Settings Functions
  */
 
 /**
@@ -973,7 +1099,11 @@ const createGoalTableRow = (goal) => {
  */
 const initNotifications = async () => {
   await loadNotificationSettings();
-  q("#notificationsForm").addEventListener("submit", handleNotificationSubmit);
+
+  const form = q("#notifications-form");
+  if (form) {
+    form.addEventListener("submit", handleNotificationSubmit);
+  }
 };
 
 /**
@@ -983,9 +1113,13 @@ const loadNotificationSettings = async () => {
   const response = await window.cashmoo.getNotifications();
   if (!response?.ok || !response.settings) return;
 
-  q("#notificationsEnabled").checked = !!response.settings.enabled;
-  q("#alertsDue").checked = !!response.settings.alertsDue;
-  q("#alertsGoals").checked = !!response.settings.alertsGoals;
+  const enabledEl = q("#notifications-enabled");
+  const dueEl = q("#alerts-due");
+  const goalsEl = q("#alerts-goals");
+
+  if (enabledEl) enabledEl.checked = !!response.settings.enabled;
+  if (dueEl) dueEl.checked = !!response.settings.alertsDue;
+  if (goalsEl) goalsEl.checked = !!response.settings.alertsGoals;
 };
 
 /**
@@ -999,7 +1133,7 @@ const handleNotificationSubmit = async (event) => {
   const response = await window.cashmoo.updateNotifications(formData);
 
   if (!response.ok) {
-    showError(q("#notificationsError"), response.error);
+    showError(q("#notifications-error"), response.error);
   }
 };
 
@@ -1008,13 +1142,13 @@ const handleNotificationSubmit = async (event) => {
  * @returns {Object} Notification form data
  */
 const collectNotificationFormData = () => ({
-  enabled: q("#notificationsEnabled").checked,
-  alertsDue: q("#alertsDue").checked,
-  alertsGoals: q("#alertsGoals").checked
+  enabled: q("#notifications-enabled")?.checked,
+  alertsDue: q("#alerts-due")?.checked,
+  alertsGoals: q("#alerts-goals")?.checked
 });
 
 /**
- * Settings functions
+ * Settings Functions
  */
 
 /**
@@ -1023,7 +1157,11 @@ const collectNotificationFormData = () => ({
 const initSettings = async () => {
   await loadApplicationSettings();
   setupSettingsEventListeners();
-  q("#settingsForm").addEventListener("submit", handleSettingsSubmit);
+
+  const form = q("#settings-form");
+  if (form) {
+    form.addEventListener("submit", handleSettingsSubmit);
+  }
 };
 
 /**
@@ -1033,18 +1171,26 @@ const loadApplicationSettings = async () => {
   const response = await window.cashmoo.getSettings();
   if (!response.ok) return;
 
-  q("#settingsUserName").value = response.settings.userName;
-  q("#settingsCurrency").value = response.settings.currency;
-  q("#settingsDateFormat").value = response.settings.dateFormat;
+  const nameEl = q("#settings-user-name");
+  const currencyEl = q("#settings-currency");
+  const dateEl = q("#settings-date-format");
+
+  if (nameEl) nameEl.value = response.settings.userName;
+  if (currencyEl) currencyEl.value = response.settings.currency;
+  if (dateEl) dateEl.value = response.settings.dateFormat;
 };
 
 /**
  * Sets up settings page event listeners
  */
 const setupSettingsEventListeners = () => {
-  q("#exportBtn").addEventListener("click", handleDataExport);
-  q("#importBtn").addEventListener("click", handleDataImport);
-  q("#resetBtn").addEventListener("click", handleDataReset);
+  const exportBtn = q("#export-btn");
+  const importBtn = q("#import-btn");
+  const resetBtn = q("#reset-btn");
+
+  if (exportBtn) exportBtn.addEventListener("click", handleDataExport);
+  if (importBtn) importBtn.addEventListener("click", handleDataImport);
+  if (resetBtn) resetBtn.addEventListener("click", handleDataReset);
 };
 
 /**
@@ -1060,7 +1206,7 @@ const handleDataExport = async () => {
 const handleDataImport = async () => {
   const response = await window.cashmoo.importData();
   if (!response.ok) {
-    showError(q("#settingsError"), response.error);
+    showError(q("#settings-error"), response.error);
     return;
   }
   location.reload();
@@ -1084,7 +1230,7 @@ const handleSettingsSubmit = async (event) => {
   const response = await window.cashmoo.updateSettings(formData);
 
   if (!response.ok) {
-    showError(q("#settingsError"), response.error);
+    showError(q("#settings-error"), response.error);
   }
 };
 
@@ -1093,9 +1239,9 @@ const handleSettingsSubmit = async (event) => {
  * @returns {Object} Settings form data
  */
 const collectSettingsFormData = () => ({
-  userName: q("#settingsUserName").value.trim(),
-  currency: q("#settingsCurrency").value,
-  dateFormat: q("#settingsDateFormat").value
+  userName: q("#settings-user-name")?.value.trim(),
+  currency: q("#settings-currency")?.value,
+  dateFormat: q("#settings-date-format")?.value
 });
 
 /**
@@ -1104,14 +1250,14 @@ const collectSettingsFormData = () => ({
  */
 window.addEventListener("DOMContentLoaded", async () => {
   const pageInitializers = [
-    { selector: "#dashboardBalance", initializer: loadDashboard },
-    { selector: "#setupUserName", initializer: initSetup },
-    { selector: "#expenseForm", initializer: initExpenses },
-    { selector: "#incomeForm", initializer: initIncomes },
-    { selector: "#cardForm", initializer: initCards },
-    { selector: "#goalForm", initializer: initGoals },
-    { selector: "#notificationsForm", initializer: initNotifications },
-    { selector: "#settingsForm", initializer: initSettings }
+    { selector: "#dashboard-balance", initializer: loadDashboard },
+    { selector: "#setup-user-name", initializer: initSetup },
+    { selector: "#expense-form", initializer: initExpenses },
+    { selector: "#income-form", initializer: initIncomes },
+    { selector: "#card-form", initializer: initCards },
+    { selector: "#goal-form", initializer: initGoals },
+    { selector: "#notifications-form", initializer: initNotifications },
+    { selector: "#settings-form", initializer: initSettings }
   ];
 
   for (const { selector, initializer } of pageInitializers) {
