@@ -1,20 +1,19 @@
 /**
- * Electron configuration utilities for Windows compatibility
+ * Electron configuration utilities for Windows compatibility.
  */
-
 import path from "path";
 import { app } from "electron";
 
 /**
- * Gets Windows-specific configuration for the application
- * @returns {Object} Configuration object with Windows-specific settings
+ * Gets Windows-specific configuration for the application.
+ * @returns {Object} Configuration object with Windows-specific settings.
  */
 export const getWindowsConfig = () => {
   const isWindows = process.platform === "win32";
 
   return {
     /**
-     * Window configuration optimized for Windows
+     * Window configuration optimized for Windows.
      */
     windowConfig: {
       width: 768,
@@ -39,7 +38,7 @@ export const getWindowsConfig = () => {
     },
 
     /**
-     * Application configuration for Windows
+     * Application configuration for Windows.
      */
     appConfig: {
       userAgent: isWindows ? "CashMoo-Windows" : "CashMoo",
@@ -51,12 +50,12 @@ export const getWindowsConfig = () => {
     },
 
     /**
-     * Path configuration with Windows-specific handling
+     * Path configuration with Windows-specific handling.
      */
     pathConfig: {
       /**
-       * Gets user data path with Windows fallback
-       * @returns {string} User data directory path
+       * Gets user data path with Windows fallback.
+       * @returns {string} User data directory path.
        */
       getUserDataPath: () => {
         if (isWindows) {
@@ -66,9 +65,9 @@ export const getWindowsConfig = () => {
       },
 
       /**
-       * Normalizes file paths for Windows compatibility
-       * @param {string} filepath - File path to normalize
-       * @returns {string} Normalized file path
+       * Normalizes file paths for Windows compatibility.
+       * @param {string} filepath - File path to normalize.
+       * @returns {string} Normalized file path.
        */
       normalizePath: (filepath) => {
         return path.normalize(filepath.replace(/\//g, path.sep));

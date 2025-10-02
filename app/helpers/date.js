@@ -1,18 +1,18 @@
 /**
- * Date utility functions for CashMoo application
+ * Date utility functions.
  */
 
 /**
- * Gets current date in ISO format (YYYY-MM-DD)
- * @returns {string} Current date in ISO format
+ * Gets current date in ISO format (YYYY-MM-DD).
+ * @returns {string} Current date in ISO format.
  */
 export const nowIso = () => new Date().toISOString().slice(0, 10);
 
 /**
- * Converts ISO date string to user-friendly format
- * @param {string} iso - Date in ISO format (YYYY-MM-DD)
- * @param {string} fmt - Format type ("DD/MM/YYYY" or "MM/DD/YYYY")
- * @returns {string} Formatted date string
+ * Converts ISO date string to user-friendly format.
+ * @param {string} iso - Date in ISO format (YYYY-MM-DD).
+ * @param {string} fmt - Format type ("DD/MM/YYYY" or "MM/DD/YYYY").
+ * @returns {string} Formatted date string.
  */
 export const toUserFormat = (iso, fmt) => {
   const [year, month, day] = iso.split("-");
@@ -25,11 +25,11 @@ export const toUserFormat = (iso, fmt) => {
 };
 
 /**
- * Adjusts day to fit within the given month's valid range
- * @param {number} year - Target year
- * @param {number} month - Target month (1-12)
- * @param {number} day - Desired day
- * @returns {number} Valid day for the given month
+ * Adjusts day to fit within the given month's valid range.
+ * @param {number} year - Target year.
+ * @param {number} month - Target month (1-12).
+ * @param {number} day - Desired day.
+ * @returns {number} Valid day for the given month.
  */
 export const adjustDayForMonth = (year, month, day) => {
   const maxDaysInMonth = new Date(year, month, 0).getDate();
@@ -37,28 +37,28 @@ export const adjustDayForMonth = (year, month, day) => {
 };
 
 /**
- * Calculates next occurrence of a specific weekday
- * @param {number} weekday - Target weekday (1=Monday, 7=Sunday)
- * @returns {string} Next occurrence date in ISO format
+ * Calculates next occurrence of a specific weekday.
+ * @param {number} weekday - Target weekday (1=Monday, 7=Sunday).
+ * @returns {string} Next occurrence date in ISO format.
  */
 export const nextWeekly = (weekday) => {
   const today = new Date();
   const currentWeekday = today.getDay() === 0 ? 7 : today.getDay();
 
   let daysUntilTarget = weekday - currentWeekday;
+
   if (daysUntilTarget <= 0) {
     daysUntilTarget += 7;
   }
 
   const targetDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + daysUntilTarget);
-
   return targetDate.toISOString().slice(0, 10);
 };
 
 /**
- * Calculates next monthly occurrence of a specific day
- * @param {number} day - Target day of month (1-31)
- * @returns {string} Next occurrence date in ISO format
+ * Calculates next monthly occurrence of a specific day.
+ * @param {number} day - Target day of month (1-31).
+ * @returns {string} Next occurrence date in ISO format.
  */
 export const nextMonthly = (day) => {
   const today = new Date();
@@ -82,10 +82,10 @@ export const nextMonthly = (day) => {
 };
 
 /**
- * Calculates next annual occurrence of a specific date
- * @param {number} month - Target month (1-12)
- * @param {number} day - Target day of month (1-31)
- * @returns {string} Next occurrence date in ISO format
+ * Calculates next annual occurrence of a specific date.
+ * @param {number} month - Target month (1-12).
+ * @param {number} day - Target day of month (1-31).
+ * @returns {string} Next occurrence date in ISO format.
  */
 export const nextAnnual = (month, day) => {
   const today = new Date();
@@ -107,10 +107,10 @@ export const nextAnnual = (month, day) => {
 };
 
 /**
- * Checks if a date falls within specified days from today
- * @param {string} iso - Target date in ISO format
- * @param {number[]} daysList - Array of day offsets to check against
- * @returns {boolean} True if date is within any of the specified day ranges
+ * Checks if a date falls within specified days from today.
+ * @param {string} iso - Target date in ISO format.
+ * @param {number[]} daysList - Array of day offsets to check against.
+ * @returns {boolean} True if date is within any of the specified day ranges.
  */
 export const isWithinDaysFromToday = (iso, daysList) => {
   const targetTime = new Date(iso).getTime();
@@ -127,11 +127,11 @@ export const isWithinDaysFromToday = (iso, daysList) => {
 };
 
 /**
- * Calculates monthly financial projection based on income and expenses
- * @param {Object} data - Application data containing incomes and expenses
- * @param {Array} data.incomes - Array of income objects
- * @param {Array} data.expenses - Array of expense objects
- * @returns {number} Monthly projection (income - expenses)
+ * Calculates monthly financial projection based on income and expenses.
+ * @param {Object} data - Application data containing incomes and expenses.
+ * @param {Array} data.incomes - Array of income objects.
+ * @param {Array} data.expenses - Array of expense objects.
+ * @returns {number} Monthly projection (income - expenses).
  */
 export const projectMonthly = (data) => {
   const totalIncomes = data.incomes.reduce((accumulator, income) => {
@@ -146,15 +146,15 @@ export const projectMonthly = (data) => {
 };
 
 /**
- * Calculates the next due date for an expense based on its recurrence pattern
- * @param {Object} expense - Expense object
- * @param {string} expense.dueDate - Due date for single expenses
- * @param {Object} expense.recurrence - Recurrence configuration
- * @param {string} expense.recurrence.type - Type of recurrence (single, weekly, monthly, annual)
- * @param {number} expense.recurrence.weekday - Weekday for weekly recurrence (1-7)
- * @param {number} expense.recurrence.day - Day for monthly recurrence (1-31)
- * @param {number} expense.recurrence.month - Month for annual recurrence (1-12)
- * @returns {string|null} Next due date in ISO format, or null if invalid recurrence
+ * Calculates the next due date for an expense based on its recurrence pattern.
+ * @param {Object} expense - Expense object.
+ * @param {string} expense.dueDate - Due date for single expenses.
+ * @param {Object} expense.recurrence - Recurrence configuration.
+ * @param {string} expense.recurrence.type - Type of recurrence (single, weekly, monthly, annual).
+ * @param {number} expense.recurrence.weekday - Weekday for weekly recurrence (1-7).
+ * @param {number} expense.recurrence.day - Day for monthly recurrence (1-31).
+ * @param {number} expense.recurrence.month - Month for annual recurrence (1-12).
+ * @returns {string|null} Next due date in ISO format, or null if invalid recurrence.
  */
 export const nextDueDateForExpense = (expense) => {
   const { recurrence } = expense;
@@ -162,16 +162,12 @@ export const nextDueDateForExpense = (expense) => {
   switch (recurrence.type) {
     case "single":
       return expense.dueDate;
-
     case "weekly":
       return nextWeekly(recurrence.weekday);
-
     case "monthly":
       return nextMonthly(recurrence.day);
-
     case "annual":
       return nextAnnual(recurrence.month, recurrence.day);
-
     default:
       return null;
   }

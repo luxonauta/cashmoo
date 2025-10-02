@@ -3,24 +3,24 @@ import path from "path";
 import { app, dialog } from "electron";
 
 /**
- * Storage utility functions for CashMoo application with Windows compatibility
+ * Storage utility functions with Windows compatibility.
  */
 
 const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * Normalizes file paths for cross-platform compatibility
- * @param {string} filepath - File path to normalize
- * @returns {string} Normalized file path
+ * Normalizes file paths for cross-platform compatibility.
+ * @param {string} filepath - File path to normalize.
+ * @returns {string} Normalized file path.
  */
 const normalizePath = (filepath) => {
   return path.normalize(filepath);
 };
 
 /**
- * Ensures that a directory exists, creating it if necessary
- * @param {string} dirPath - Directory path to ensure
- * @returns {boolean} True if directory exists or was created successfully
+ * Ensures that a directory exists, creating it if necessary.
+ * @param {string} dirPath - Directory path to ensure.
+ * @returns {boolean} True if directory exists or was created successfully.
  */
 const ensureDirectoryExists = (dirPath) => {
   try {
@@ -36,8 +36,8 @@ const ensureDirectoryExists = (dirPath) => {
 };
 
 /**
- * Gets the base application directory path with Windows fallback
- * @returns {string} Base directory path
+ * Gets the base application directory path with Windows fallback.
+ * @returns {string} Base directory path.
  */
 const getBaseDir = () => {
   try {
@@ -52,26 +52,26 @@ const getBaseDir = () => {
 };
 
 /**
- * Gets the data directory path
- * @returns {string} Data directory path
+ * Gets the data directory path.
+ * @returns {string} Data directory path.
  */
 const getDataDir = () => normalizePath(path.join(getBaseDir(), "data"));
 
 /**
- * Gets the main data file path
- * @returns {string} Data file path
+ * Gets the main data file path.
+ * @returns {string} Data file path.
  */
 export const getDataFilePath = () => normalizePath(path.join(getDataDir(), "data.json"));
 
 /**
- * Gets the backups directory path
- * @returns {string} Backups directory path
+ * Gets the backups directory path.
+ * @returns {string} Backups directory path.
  */
 const getBackupsDir = () => normalizePath(path.join(getDataDir(), "backups"));
 
 /**
- * Creates the default application data structure
- * @returns {Object} Default data object
+ * Creates the default application data structure.
+ * @returns {Object} Default data object.
  */
 const createDefaultData = () => ({
   setup: {
@@ -99,8 +99,8 @@ const createDefaultData = () => ({
 });
 
 /**
- * Ensures the default notification settings are present
- * @returns {Object} Default notification settings
+ * Ensures the default notification settings are present.
+ * @returns {Object} Default notification settings.
  */
 const getDefaultNotificationSettings = () => ({
   enabled: true,
@@ -110,13 +110,13 @@ const getDefaultNotificationSettings = () => ({
 });
 
 /**
- * Validates and normalizes application data structure
- * @param {Object} data - Raw data object to validate
- * @returns {Object} Validated and normalized data
+ * Validates and normalizes application data structure.
+ * @param {Object} data - Raw data object to validate.
+ * @returns {Object} Validated and normalized data.
  */
 const validateAndNormalizeData = (data) => {
   if (!data.settings || !data.meta) {
-    throw new Error("Invalid data structure");
+    throw new Error("Invalid data structure.");
   }
 
   if (!data.settings.notifications) {
@@ -140,7 +140,7 @@ const validateAndNormalizeData = (data) => {
 };
 
 /**
- * Creates necessary directories for the application
+ * Creates necessary directories for the application.
  */
 const createDirectories = () => {
   const directories = [getBaseDir(), getDataDir(), getBackupsDir()];
@@ -153,7 +153,7 @@ const createDirectories = () => {
 };
 
 /**
- * Creates the main data file if it doesn't exist
+ * Creates the main data file if it doesn't exist.
  */
 const createDataFileIfNeeded = () => {
   const dataFilePath = getDataFilePath();
@@ -171,7 +171,7 @@ const createDataFileIfNeeded = () => {
 };
 
 /**
- * Ensures all required data files and directories exist
+ * Ensures all required data files and directories exist.
  */
 export const ensureDataFiles = () => {
   try {
@@ -184,15 +184,15 @@ export const ensureDataFiles = () => {
 };
 
 /**
- * Reads and validates application data from file
- * @returns {Object} Application data object
+ * Reads and validates application data from file.
+ * @returns {Object} Application data object.
  */
 export const readData = () => {
   try {
     const dataFilePath = getDataFilePath();
 
     if (!fs.existsSync(dataFilePath)) {
-      console.log("Data file does not exist, creating default data");
+      console.log("Data file does not exist, creating default data.");
       return createDefaultData();
     }
 
@@ -207,9 +207,9 @@ export const readData = () => {
 };
 
 /**
- * Writes application data to file
- * @param {Object} data - Data object to write
- * @returns {boolean} True if successful, false otherwise
+ * Writes application data to file.
+ * @param {Object} data - Data object to write.
+ * @returns {boolean} True if successful, false otherwise.
  */
 export const writeData = (data) => {
   try {
@@ -224,7 +224,7 @@ export const writeData = (data) => {
 };
 
 /**
- * Checks if a weekly backup is needed and creates one
+ * Checks if a weekly backup is needed and creates one.
  */
 export const ensureWeeklyBackup = () => {
   try {
@@ -244,7 +244,7 @@ export const ensureWeeklyBackup = () => {
 };
 
 /**
- * Creates a backup of the current data file
+ * Creates a backup of the current data file.
  */
 const createBackup = () => {
   try {
@@ -259,8 +259,8 @@ const createBackup = () => {
 };
 
 /**
- * Updates the last backup timestamp in data
- * @param {Object} data - Application data object
+ * Updates the last backup timestamp in data.
+ * @param {Object} data - Application data object.
  */
 const updateLastBackupTime = (data) => {
   try {
@@ -272,8 +272,8 @@ const updateLastBackupTime = (data) => {
 };
 
 /**
- * Attempts to recover data from the most recent backup
- * @returns {boolean} True if recovery successful, false if new file created
+ * Attempts to recover data from the most recent backup.
+ * @returns {boolean} True if recovery successful, false if new file created.
  */
 export const tryRecoverFromBackup = () => {
   try {
@@ -298,8 +298,8 @@ export const tryRecoverFromBackup = () => {
 };
 
 /**
- * Checks if the current data file is valid
- * @returns {boolean} True if valid, false otherwise
+ * Checks if the current data file is valid.
+ * @returns {boolean} True if valid, false otherwise.
  */
 const isDataFileValid = () => {
   try {
@@ -312,8 +312,8 @@ const isDataFileValid = () => {
 };
 
 /**
- * Finds the most recent backup file
- * @returns {string|null} Path to latest backup or null if none found
+ * Finds the most recent backup file.
+ * @returns {string|null} Path to latest backup or null if none found.
  */
 const findLatestBackup = () => {
   try {
@@ -337,7 +337,7 @@ const findLatestBackup = () => {
 };
 
 /**
- * Creates a fresh data file with default data
+ * Creates a fresh data file with default data.
  */
 const createFreshDataFile = () => {
   try {
@@ -350,8 +350,8 @@ const createFreshDataFile = () => {
 };
 
 /**
- * Restores data from a backup file
- * @param {string} backupPath - Path to backup file
+ * Restores data from a backup file.
+ * @param {string} backupPath - Path to backup file.
  */
 const restoreFromBackup = (backupPath) => {
   try {
@@ -362,8 +362,8 @@ const restoreFromBackup = (backupPath) => {
 };
 
 /**
- * Exports application data to a user-selected file
- * @returns {Promise<string|null>} Path to exported file or null if cancelled
+ * Exports application data to a user-selected file.
+ * @returns {Promise<string|null>} Path to exported file or null if cancelled.
  */
 export const exportData = async () => {
   try {
@@ -391,8 +391,8 @@ export const exportData = async () => {
 };
 
 /**
- * Imports application data from a user-selected file
- * @returns {Promise<boolean>} True if import successful, false otherwise
+ * Imports application data from a user-selected file.
+ * @returns {Promise<boolean>} True if import successful, false otherwise.
  */
 export const importData = async () => {
   try {
@@ -415,9 +415,9 @@ export const importData = async () => {
 };
 
 /**
- * Processes and validates an imported data file
- * @param {string} filePath - Path to file to import
- * @returns {boolean} True if import successful, false otherwise
+ * Processes and validates an imported data file.
+ * @param {string} filePath - Path to file to import.
+ * @returns {boolean} True if import successful, false otherwise.
  */
 const processImportedFile = (filePath) => {
   try {
@@ -440,9 +440,9 @@ const processImportedFile = (filePath) => {
 };
 
 /**
- * Normalizes imported data to ensure compatibility
- * @param {Object} data - Imported data object
- * @returns {Object} Normalized data object
+ * Normalizes imported data to ensure compatibility.
+ * @param {Object} data - Imported data object.
+ * @returns {Object} Normalized data object.
  */
 const normalizeImportedData = (data) => {
   if (!data.settings.notifications) {
@@ -454,7 +454,7 @@ const normalizeImportedData = (data) => {
 };
 
 /**
- * Resets all application data to default values
+ * Resets all application data to default values.
  */
 export const resetData = () => {
   try {

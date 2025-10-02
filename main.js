@@ -13,8 +13,8 @@ let mainWindow = null;
 let notificationTimer = null;
 
 /**
- * Gets the icon path for the application
- * @returns {string|null} Path to the icon file, or null if not found
+ * Gets the icon path for the application.
+ * @returns {string|null} Path to the icon file, or null if not found.
  */
 const getIconPath = () => {
   const iconPath = path.join(__dirname, "assets", "icon.png");
@@ -33,14 +33,14 @@ const getIconPath = () => {
 };
 
 /**
- * Creates the main application window with platform-specific configurations
+ * Creates the main application window with platform-specific configurations.
  */
 const createWindow = () => {
   const iconPath = getIconPath();
 
   const windowConfig = {
     width: 702,
-    height: 798,
+    height: 804,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -48,17 +48,14 @@ const createWindow = () => {
       sandbox: true
     },
     title: "CashMoo",
-    show: false,
-    autoHideMenuBar: true,
-    titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "default"
+    show: false
   };
 
-  // Add icon if file exists
   if (iconPath) {
     windowConfig.icon = iconPath;
     console.log(`Using icon: ${iconPath}`);
   } else {
-    console.log("No icon file found, proceeding without icon");
+    console.log("No icon file found, proceeding without icon.");
   }
 
   mainWindow = new BrowserWindow(windowConfig);
@@ -66,11 +63,10 @@ const createWindow = () => {
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
 
-    // Set dock icon for macOS if icon exists
     if (process.platform === "darwin" && iconPath && app.dock) {
       try {
         app.dock.setIcon(iconPath);
-        console.log("Dock icon set successfully");
+        console.log("Dock icon set successfully.");
       } catch (error) {
         console.warn(`Failed to set dock icon: ${error.message}`);
       }
@@ -88,7 +84,7 @@ const createWindow = () => {
 };
 
 /**
- * Initializes the application data and services with error handling
+ * Initializes the application data and services with error handling.
  */
 const init = () => {
   try {
@@ -113,7 +109,7 @@ const init = () => {
 };
 
 /**
- * Starts the notification monitoring loop with error handling
+ * Starts the notification monitoring loop with error handling.
  */
 const startNotificationLoop = () => {
   if (notificationTimer) clearInterval(notificationTimer);
@@ -136,7 +132,7 @@ const startNotificationLoop = () => {
 
             if (isWithinDaysFromToday(dueDate, aheadDays)) {
               const formattedDate = toUserFormat(dueDate, data.settings.dateFormat);
-              showBasicNotification("Upcoming bill", `${expense.name} due on ${formattedDate}`);
+              showBasicNotification("Upcoming bill", `${expense.name} due on ${formattedDate}.`);
             }
           });
         }
@@ -149,9 +145,9 @@ const startNotificationLoop = () => {
 };
 
 /**
- * Shows a basic system notification with platform compatibility check
- * @param {string} title - Notification title
- * @param {string} body - Notification body text
+ * Shows a basic system notification with platform compatibility check.
+ * @param {string} title - Notification title.
+ * @param {string} body - Notification body text.
  */
 const showBasicNotification = (title, body) => {
   try {
@@ -164,18 +160,18 @@ const showBasicNotification = (title, body) => {
 };
 
 /**
- * Checks if the data structure is empty
- * @param {Object} data - Application data
- * @returns {boolean} True if data is empty
+ * Checks if the data structure is empty.
+ * @param {Object} data - Application data.
+ * @returns {boolean} True if data is empty.
  */
 const isEmptyData = (data) => {
   return data.expenses.length === 0 && data.incomes.length === 0 && data.cards.length === 0 && data.goals.length === 0;
 };
 
 /**
- * Calculates spending distribution by recurrence type
- * @param {Object} data - Application data
- * @returns {Array} Array of spending distribution objects
+ * Calculates spending distribution by recurrence type.
+ * @param {Object} data - Application data.
+ * @returns {Array} Array of spending distribution objects.
  */
 const spendDistribution = (data) => {
   const distributionMap = {};
@@ -193,10 +189,10 @@ const spendDistribution = (data) => {
 };
 
 /**
- * Calculates financial health indicators
- * @param {number} balance - Current balance
- * @param {Object} data - Application data
- * @returns {Object} Health indicators object
+ * Calculates financial health indicators.
+ * @param {number} balance - Current balance.
+ * @param {Object} data - Application data.
+ * @returns {Object} Health indicators object.
  */
 const healthIndicators = (balance, data) => {
   const totalIncome = data.incomes.reduce((acc, income) => acc + parseMoney(income.amount), 0);
@@ -217,32 +213,32 @@ const healthIndicators = (balance, data) => {
 };
 
 /**
- * Generates basic financial suggestions based on health indicators
- * @param {Object} health - Health indicators
- * @returns {Array} Array of suggestion strings
+ * Generates basic financial suggestions based on health indicators.
+ * @param {Object} health - Health indicators.
+ * @returns {Array} Array of suggestion strings.
  */
 const basicSuggestions = (health) => {
   const suggestions = [];
 
   if (health.savingRate < 20) {
-    suggestions.push("Increase your saving rate above 20%");
+    suggestions.push("Increase your saving rate above 20%.");
   }
 
   if (health.creditUse > 50) {
-    suggestions.push("Reduce card usage below 50% of the limit");
+    suggestions.push("Reduce card usage below 50% of the limit.");
   }
 
   if (health.netBalance < 0) {
-    suggestions.push("Avoid new expenses until you reach a positive balance");
+    suggestions.push("Avoid new expenses until you reach a positive balance.");
   }
 
-  return suggestions.length === 0 ? ["Keep your current strategy"] : suggestions;
+  return suggestions.length === 0 ? ["Keep your current strategy."] : suggestions;
 };
 
 /**
- * Builds card usage information
- * @param {Object} data - Application data
- * @returns {Array} Array of card usage objects
+ * Builds card usage information.
+ * @param {Object} data - Application data.
+ * @returns {Array} Array of card usage objects.
  */
 const buildCardsUsage = (data) => {
   return data.cards.map((card) => {
@@ -264,22 +260,22 @@ const buildCardsUsage = (data) => {
 };
 
 /**
- * Finds an item by ID in a collection
- * @param {Array} collection - Collection to search
- * @param {string} id - ID to find
- * @returns {number} Index of found item, -1 if not found
+ * Finds an item by ID in a collection.
+ * @param {Array} collection - Collection to search.
+ * @param {string} id - ID to find.
+ * @returns {number} Index of found item, -1 if not found.
  */
 const findItemIndex = (collection, id) => {
   return collection.findIndex((item) => item.id === id);
 };
 
 /**
- * Validates and updates an item in a collection
- * @param {Array} collection - Collection containing the item
- * @param {number} index - Index of item to update
- * @param {Object} update - Update data
- * @param {Function} validator - Validation function
- * @returns {Object} Validation result
+ * Validates and updates an item in a collection.
+ * @param {Array} collection - Collection containing the item.
+ * @param {number} index - Index of item to update.
+ * @param {Object} update - Update data.
+ * @param {Function} validator - Validation function.
+ * @returns {Object} Validation result.
  */
 const updateItem = (collection, index, update, validator) => {
   const updatedItem = { ...collection[index], ...update };
@@ -294,10 +290,9 @@ const updateItem = (collection, index, update, validator) => {
 };
 
 /**
- * App lifecycle and event handlers
+ * App lifecycle and event handlers.
  */
 app.whenReady().then(() => {
-  // Set application name for macOS menu bar and dock
   if (process.platform === "darwin") {
     app.setName("CashMoo");
   }
@@ -328,7 +323,7 @@ app.on("certificate-error", (event, _webContents, url, _error, _certificate, cal
 });
 
 /**
- * IPC Main Handlers - Setup
+ * IPC Main Handlers - Setup.
  */
 
 ipcMain.handle("setup:save", (_event, payload) => {
@@ -351,7 +346,7 @@ ipcMain.handle("setup:save", (_event, payload) => {
 });
 
 /**
- * IPC Main Handlers - Navigation
+ * IPC Main Handlers - Navigation.
  */
 
 ipcMain.handle("nav:ready", () => {
@@ -360,7 +355,7 @@ ipcMain.handle("nav:ready", () => {
 });
 
 /**
- * IPC Main Handlers - Dashboard
+ * IPC Main Handlers - Dashboard.
  */
 
 ipcMain.handle("dashboard:summary", () => {
@@ -390,7 +385,7 @@ ipcMain.handle("dashboard:summary", () => {
 });
 
 /**
- * IPC Main Handlers - Expenses
+ * IPC Main Handlers - Expenses.
  */
 
 ipcMain.handle("expenses:list", () => {
@@ -424,7 +419,7 @@ ipcMain.handle("expenses:update", (_event, payload) => {
   const itemIndex = findItemIndex(data.expenses, payload.id);
 
   if (itemIndex < 0) {
-    return { ok: false, error: "Expense not found" };
+    return { ok: false, error: "Expense not found." };
   }
 
   const updateResult = updateItem(data.expenses, itemIndex, payload.update, validateExpense);
@@ -441,7 +436,7 @@ ipcMain.handle("expenses:remove", (_event, payload) => {
   const itemIndex = findItemIndex(data.expenses, payload.id);
 
   if (itemIndex < 0) {
-    return { ok: false, error: "Expense not found" };
+    return { ok: false, error: "Expense not found." };
   }
 
   data.expenses.splice(itemIndex, 1);
@@ -454,11 +449,11 @@ ipcMain.handle("expenses:update-status", (_event, payload) => {
   const itemIndex = findItemIndex(data.expenses, payload.id);
 
   if (itemIndex < 0) {
-    return { ok: false, error: "Expense not found" };
+    return { ok: false, error: "Expense not found." };
   }
 
   if (!["unpaid", "paid"].includes(payload.status)) {
-    return { ok: false, error: "Invalid status" };
+    return { ok: false, error: "Invalid status." };
   }
 
   data.expenses[itemIndex].status = payload.status;
@@ -467,7 +462,7 @@ ipcMain.handle("expenses:update-status", (_event, payload) => {
 });
 
 /**
- * IPC Main Handlers - Incomes
+ * IPC Main Handlers - Incomes.
  */
 
 ipcMain.handle("incomes:list", () => {
@@ -501,7 +496,7 @@ ipcMain.handle("incomes:update", (_event, payload) => {
   const itemIndex = findItemIndex(data.incomes, payload.id);
 
   if (itemIndex < 0) {
-    return { ok: false, error: "Income not found" };
+    return { ok: false, error: "Income not found." };
   }
 
   const updateResult = updateItem(data.incomes, itemIndex, payload.update, validateIncome);
@@ -518,7 +513,7 @@ ipcMain.handle("incomes:remove", (_event, payload) => {
   const itemIndex = findItemIndex(data.incomes, payload.id);
 
   if (itemIndex < 0) {
-    return { ok: false, error: "Income not found" };
+    return { ok: false, error: "Income not found." };
   }
 
   data.incomes.splice(itemIndex, 1);
@@ -531,11 +526,11 @@ ipcMain.handle("incomes:update-status", (_event, payload) => {
   const itemIndex = findItemIndex(data.incomes, payload.id);
 
   if (itemIndex < 0) {
-    return { ok: false, error: "Income not found" };
+    return { ok: false, error: "Income not found." };
   }
 
   if (!["pending", "confirmed"].includes(payload.status)) {
-    return { ok: false, error: "Invalid status" };
+    return { ok: false, error: "Invalid status." };
   }
 
   data.incomes[itemIndex].status = payload.status;
@@ -544,7 +539,7 @@ ipcMain.handle("incomes:update-status", (_event, payload) => {
 });
 
 /**
- * IPC Main Handlers - Cards
+ * IPC Main Handlers - Cards.
  */
 
 ipcMain.handle("cards:list", () => {
@@ -563,11 +558,11 @@ ipcMain.handle("cards:add", (_event, payload) => {
   const nameExists = data.cards.some((card) => card.name.toLowerCase() === payload.name.toLowerCase());
 
   if (nameExists) {
-    return { ok: false, error: "Card name must be unique" };
+    return { ok: false, error: "Card name must be unique." };
   }
 
   if (!validateCardClosingPayment(payload.closingDay, payload.paymentDay)) {
-    return { ok: false, error: "Payment day must be after closing day" };
+    return { ok: false, error: "Payment day must be after closing day." };
   }
 
   const id = `card_${Date.now()}`;
@@ -586,7 +581,7 @@ ipcMain.handle("cards:update", (_event, payload) => {
   const itemIndex = findItemIndex(data.cards, payload.id);
 
   if (itemIndex < 0) {
-    return { ok: false, error: "Card not found" };
+    return { ok: false, error: "Card not found." };
   }
 
   const updatedCard = { ...data.cards[itemIndex], ...payload.update };
@@ -597,13 +592,13 @@ ipcMain.handle("cards:update", (_event, payload) => {
   }
 
   if (!validateCardClosingPayment(updatedCard.closingDay, updatedCard.paymentDay)) {
-    return { ok: false, error: "Payment day must be after closing day" };
+    return { ok: false, error: "Payment day must be after closing day." };
   }
 
   const nameConflict = data.cards.some((card) => card.id !== payload.id && card.name.toLowerCase() === updatedCard.name.toLowerCase());
 
   if (nameConflict) {
-    return { ok: false, error: "Card name must be unique" };
+    return { ok: false, error: "Card name must be unique." };
   }
 
   data.cards[itemIndex] = updatedCard;
@@ -616,13 +611,13 @@ ipcMain.handle("cards:remove", (_event, payload) => {
   const itemIndex = findItemIndex(data.cards, payload.id);
 
   if (itemIndex < 0) {
-    return { ok: false, error: "Card not found" };
+    return { ok: false, error: "Card not found." };
   }
 
   const hasLinkedExpenses = data.expenses.some((expense) => expense.paymentMethod === "card" && expense.cardId === payload.id);
 
   if (hasLinkedExpenses) {
-    return { ok: false, error: "Card has linked expenses" };
+    return { ok: false, error: "Card has linked expenses." };
   }
 
   data.cards.splice(itemIndex, 1);
@@ -631,7 +626,7 @@ ipcMain.handle("cards:remove", (_event, payload) => {
 });
 
 /**
- * IPC Main Handlers - Goals
+ * IPC Main Handlers - Goals.
  */
 
 ipcMain.handle("goals:list", () => {
@@ -664,7 +659,7 @@ ipcMain.handle("goals:remove", (_event, payload) => {
   const itemIndex = findItemIndex(data.goals, payload.id);
 
   if (itemIndex < 0) {
-    return { ok: false, error: "Goal not found" };
+    return { ok: false, error: "Goal not found." };
   }
 
   data.goals.splice(itemIndex, 1);
@@ -673,7 +668,7 @@ ipcMain.handle("goals:remove", (_event, payload) => {
 });
 
 /**
- * IPC Main Handlers - Notifications
+ * IPC Main Handlers - Notifications.
  */
 
 ipcMain.handle("notifications:get", () => {
@@ -706,7 +701,7 @@ ipcMain.handle("notifications:update", (_event, payload) => {
 });
 
 /**
- * IPC Main Handlers - Settings
+ * IPC Main Handlers - Settings.
  */
 
 ipcMain.handle("settings:get", () => {
@@ -725,15 +720,15 @@ ipcMain.handle("settings:update", (_event, payload) => {
   const data = readData();
 
   if (!payload.userName || payload.userName.length > 30) {
-    return { ok: false, error: "Invalid user name" };
+    return { ok: false, error: "Invalid user name." };
   }
 
   if (!["BRL", "USD", "EUR"].includes(payload.currency)) {
-    return { ok: false, error: "Invalid currency" };
+    return { ok: false, error: "Invalid currency." };
   }
 
   if (!["DD/MM/YYYY", "MM/DD/YYYY"].includes(payload.dateFormat)) {
-    return { ok: false, error: "Invalid date format" };
+    return { ok: false, error: "Invalid date format." };
   }
 
   data.settings.userName = payload.userName;
@@ -745,14 +740,14 @@ ipcMain.handle("settings:update", (_event, payload) => {
 });
 
 /**
- * IPC Main Handlers - Data Management
+ * IPC Main Handlers - Data Management.
  */
 
 ipcMain.handle("data:export", async () => {
   const exportPath = await exportDataFile();
 
   if (!exportPath) {
-    return { ok: false, error: "Export canceled" };
+    return { ok: false, error: "Export canceled." };
   }
 
   return { ok: true, path: exportPath };
@@ -762,7 +757,7 @@ ipcMain.handle("data:import", async () => {
   const importSuccess = await importDataFile();
 
   if (!importSuccess) {
-    return { ok: false, error: "Invalid JSON file" };
+    return { ok: false, error: "Invalid JSON file." };
   }
 
   return { ok: true };

@@ -34,25 +34,25 @@
           Track your spending to understand where your money goes. Record both regular bills and one-time expenses to get a complete picture of your financial commitments.
         </p>
 
-        <form id="expenseForm">
+        <form id="expense-form">
           <fieldset>
             <legend>Expense Details</legend>
 
             <div class="form-group">
-              <label for="expenseName">Expense name *</label>
-              <input id="expenseName" type="text" maxlength="50" required placeholder="e.g., Rent, Groceries, Netflix" aria-describedby="expense-name-help" />
+              <label for="expense-name">Expense name *</label>
+              <input id="expense-name" type="text" maxlength="50" required placeholder="e.g., Rent, Groceries, Netflix" aria-describedby="expense-name-help" />
               <p id="expense-name-help" class="help-text">Give this expense a clear name that helps you identify it quickly.</p>
             </div>
 
             <div class="form-group">
-              <label for="expenseDescription">Description</label>
-              <input id="expenseDescription" type="text" maxlength="200" placeholder="Additional details (optional)" aria-describedby="expense-description-help" />
+              <label for="expense-description">Description</label>
+              <input id="expense-description" type="text" maxlength="200" placeholder="Additional details (optional)" aria-describedby="expense-description-help" />
               <p id="expense-description-help" class="help-text">Add notes like account numbers, specific services, or any details that help you remember this expense.</p>
             </div>
 
             <div class="form-group">
-              <label for="expenseAmount">Amount *</label>
-              <input id="expenseAmount" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="expense-amount-help" />
+              <label for="expense-amount">Amount *</label>
+              <input id="expense-amount" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="expense-amount-help" />
               <p id="expense-amount-help" class="help-text">Enter the amount you pay each time. For variable expenses, use your average monthly amount.</p>
             </div>
           </fieldset>
@@ -61,34 +61,34 @@
             <legend>Payment Schedule</legend>
 
             <div class="form-group">
-              <label for="expenseRecurrence">Frequency *</label>
-              <select id="expenseRecurrence" required aria-describedby="expense-recurrence-help"></select>
+              <label for="expense-recurrence">Frequency *</label>
+              <select id="expense-recurrence" required aria-describedby="expense-recurrence-help"></select>
               <p id="expense-recurrence-help" class="help-text">Choose how often you pay this expense.</p>
             </div>
 
-            <div id="expenseDueDateWrap" style="display: none" class="form-group">
-              <label for="expenseDueDate">Due date</label>
-              <input id="expenseDueDate" type="date" aria-describedby="expense-due-help" />
+            <div id="expense-due-date-wrap" style="display: none" class="form-group">
+              <label for="expense-due-date">Due date</label>
+              <input id="expense-due-date" type="date" aria-describedby="expense-due-help" />
               <p id="expense-due-help" class="help-text">When is this one-time expense due?</p>
             </div>
 
-            <div id="expenseWeeklyWrap" style="display: none" class="form-group">
-              <label for="expenseWeekday">Day of week</label>
-              <select id="expenseWeekday" aria-describedby="expense-weekday-help"></select>
+            <div id="expense-weekly-wrap" style="display: none" class="form-group">
+              <label for="expense-weekday">Day of week</label>
+              <select id="expense-weekday" aria-describedby="expense-weekday-help"></select>
               <p id="expense-weekday-help" class="help-text">Which day of the week is this expense typically due?</p>
             </div>
 
-            <div id="expenseMonthlyWrap" style="display: none" class="form-group">
-              <label for="expenseDay">Day of month</label>
-              <input id="expenseDay" type="number" min="1" max="30" placeholder="15" aria-describedby="expense-monthly-help" />
+            <div id="expense-monthly-wrap" style="display: none" class="form-group">
+              <label for="expense-day">Day of month</label>
+              <input id="expense-day" type="number" min="1" max="30" placeholder="15" aria-describedby="expense-monthly-help" />
               <p id="expense-monthly-help" class="help-text">Which day of the month is this bill due?</p>
             </div>
 
-            <div id="expenseAnnualWrap" style="display: none" class="form-group">
-              <label for="expenseMonth">Month</label>
-              <select id="expenseMonth" aria-describedby="expense-annual-month-help"></select>
-              <label for="expenseDayAnnual">Day</label>
-              <input id="expenseDayAnnual" type="number" min="1" max="30" placeholder="1" aria-describedby="expense-annual-day-help" />
+            <div id="expense-annual-wrap" style="display: none" class="form-group">
+              <label for="expense-month">Month</label>
+              <select id="expense-month" aria-describedby="expense-annual-month-help"></select>
+              <label for="expense-day-annual">Day</label>
+              <input id="expense-day-annual" type="number" min="1" max="30" placeholder="1" aria-describedby="expense-annual-day-help" />
               <p id="expense-annual-month-help" class="help-text">When is this annual expense due?</p>
             </div>
           </fieldset>
@@ -97,8 +97,8 @@
             <legend>Payment Method</legend>
 
             <div class="form-group">
-              <label for="expensePayment">Payment type *</label>
-              <select id="expensePayment" required aria-describedby="expense-payment-help">
+              <label for="expense-payment">Payment type *</label>
+              <select id="expense-payment" required aria-describedby="expense-payment-help">
                 <option value="auto-debit">Automatic payment (bank account)</option>
                 <option value="manual">Manual payment (cash, check, bank transfer)</option>
                 <option value="card">Credit card</option>
@@ -106,18 +106,18 @@
               <p id="expense-payment-help" class="help-text">Choose how you pay this bill.</p>
             </div>
 
-            <div id="expenseCardWrap" style="display: none" class="form-group">
-              <label for="expenseCard">Credit card</label>
-              <select id="expenseCard" aria-describedby="expense-card-help"></select>
+            <div id="expense-card-wrap" style="display: none" class="form-group">
+              <label for="expense-card">Credit card</label>
+              <select id="expense-card" aria-describedby="expense-card-help"></select>
               <p id="expense-card-help" class="help-text">Which credit card do you use for this expense?</p>
             </div>
           </fieldset>
 
           <div class="form-actions">
-            <button id="expenseSubmit" type="submit" class="button-primary">Add Expense</button>
+            <button id="expense-submit" type="submit" class="button-primary">Add Expense</button>
           </div>
 
-          <div id="expenseError" role="alert" aria-live="assertive" style="color: var(--color-system-red); margin-top: var(--spacing-12)"></div>
+          <div id="expense-error" role="alert" aria-live="assertive" style="color: var(--color-system-red); margin-top: var(--spacing-12)"></div>
         </form>
       </section>
 
@@ -136,11 +136,11 @@
               <th scope="col">Actions</th>
             </tr>
           </thead>
-          <tbody id="expensesBody"></tbody>
+          <tbody id="expenses-body"></tbody>
         </table>
 
         <div class="empty-state" style="display: none">
-          <p>No expenses added yet. Add your first expense above to start tracking your spending!</p>
+          <p>No expenses added yet. Add your first expense above to start tracking your spending.</p>
         </div>
       </section>
     </main>

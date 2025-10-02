@@ -1,28 +1,28 @@
 /**
- * Main renderer script for CashMoo application
- * Handles all UI interactions and form management
+ * Main renderer script.
+ * Handles all UI interactions and form management.
  */
 
 /**
- * Quick selector function
- * @param {string} selector - CSS selector string
- * @returns {Element|null} Selected DOM element
+ * Quick selector function.
+ * @param {string} selector - CSS selector string.
+ * @returns {Element|null} Selected DOM element.
  */
 const q = (selector) => document.querySelector(selector);
 
 /**
- * Shows error message in specified element
- * @param {Element} node - DOM element to display error in
- * @param {string} text - Error message text
+ * Shows error message in specified element.
+ * @param {Element} node - DOM element to display error in.
+ * @param {string} text - Error message text.
  */
 const showError = (node, text) => {
   if (node) node.textContent = text || "";
 };
 
 /**
- * Fills a select element with options
- * @param {Element} element - Select element to populate
- * @param {Array<{value: string, label: string}>} optionsList - Array of option objects
+ * Fills a select element with options.
+ * @param {Element} element - Select element to populate.
+ * @param {Array<{value: string, label: string}>} optionsList - Array of option objects.
  */
 const fillSelect = (element, optionsList) => {
   if (!element) return;
@@ -36,9 +36,9 @@ const fillSelect = (element, optionsList) => {
 };
 
 /**
- * Creates a table cell with text content
- * @param {string} text - Text content for the cell
- * @returns {HTMLTableCellElement} Table cell element
+ * Creates a table cell with text content.
+ * @param {string} text - Text content for the cell.
+ * @returns {HTMLTableCellElement} Table cell element.
  */
 const createTableCell = (text) => {
   const cell = document.createElement("td");
@@ -47,10 +47,10 @@ const createTableCell = (text) => {
 };
 
 /**
- * Creates a button element with text and click handler
- * @param {string} text - Button text
- * @param {Function} clickHandler - Click event handler
- * @returns {HTMLButtonElement} Button element
+ * Creates a button element with text and click handler.
+ * @param {string} text - Button text.
+ * @param {Function} clickHandler - Click event handler.
+ * @returns {HTMLButtonElement} Button element.
  */
 const createButton = (text, clickHandler) => {
   const button = document.createElement("button");
@@ -62,7 +62,7 @@ const createButton = (text, clickHandler) => {
 };
 
 /**
- * Configuration constants for form options
+ * Configuration constants for form options.
  */
 const OPTIONS = {
   recurrence: [
@@ -106,7 +106,7 @@ const OPTIONS = {
 };
 
 /**
- * Global state for editing operations
+ * Global state for editing operations.
  */
 const editingState = {
   expenseId: null,
@@ -115,14 +115,14 @@ const editingState = {
 };
 
 /**
- * Builds recurrence object based on type and parameters
- * @param {string} type - Recurrence type (single, weekly, monthly, annual)
- * @param {Object} params - Recurrence parameters
- * @param {number} params.weekday - Weekday for weekly recurrence (1-7)
- * @param {number} params.day - Day for monthly recurrence (1-30)
- * @param {number} params.month - Month for annual recurrence (1-12)
- * @param {number} params.dayAnnual - Day for annual recurrence (1-30)
- * @returns {Object} Recurrence configuration object
+ * Builds recurrence object based on type and parameters.
+ * @param {string} type - Recurrence type (single, weekly, monthly, annual).
+ * @param {Object} params - Recurrence parameters.
+ * @param {number} params.weekday - Weekday for weekly recurrence (1-7).
+ * @param {number} params.day - Day for monthly recurrence (1-30).
+ * @param {number} params.month - Month for annual recurrence (1-12).
+ * @param {number} params.dayAnnual - Day for annual recurrence (1-30).
+ * @returns {Object} Recurrence configuration object.
  */
 const buildRecurrence = (type, { weekday, day, month, dayAnnual }) => {
   switch (type) {
@@ -138,8 +138,8 @@ const buildRecurrence = (type, { weekday, day, month, dayAnnual }) => {
 };
 
 /**
- * Toggles visibility of recurrence-specific form fields
- * @param {string} prefix - Form field prefix (expense/income)
+ * Toggles visibility of recurrence-specific form fields.
+ * @param {string} prefix - Form field prefix (expense/income).
  */
 const toggleRecurrenceFields = (prefix) => {
   const recurrenceType = q(`#${prefix}-recurrence`)?.value;
@@ -164,11 +164,11 @@ const toggleRecurrenceFields = (prefix) => {
 };
 
 /**
- * Dashboard Functions
+ * Dashboard Functions.
  */
 
 /**
- * Loads and displays dashboard data
+ * Loads and displays dashboard data.
  */
 const loadDashboard = async () => {
   const response = await window.cashmoo.dashboardSummary();
@@ -184,7 +184,7 @@ const loadDashboard = async () => {
 };
 
 /**
- * Shows empty dashboard with tutorial
+ * Shows empty dashboard with tutorial.
  */
 const showEmptyDashboard = () => {
   const tutorial = q("#tutorial");
@@ -194,8 +194,8 @@ const showEmptyDashboard = () => {
 };
 
 /**
- * Shows populated dashboard with data
- * @param {Object} data - Dashboard data
+ * Shows populated dashboard with data.
+ * @param {Object} data - Dashboard data.
  */
 const showPopulatedDashboard = (data) => {
   const tutorial = q("#tutorial");
@@ -211,8 +211,8 @@ const showPopulatedDashboard = (data) => {
 };
 
 /**
- * Updates financial summary section
- * @param {Object} data - Dashboard data
+ * Updates financial summary section.
+ * @param {Object} data - Dashboard data.
  */
 const updateFinancialSummary = (data) => {
   const balance = q("#dashboard-balance");
@@ -222,8 +222,8 @@ const updateFinancialSummary = (data) => {
 };
 
 /**
- * Updates distribution table
- * @param {Array<{type: string, amount: number}>} distribution - Distribution data
+ * Updates distribution table.
+ * @param {Array<{type: string, amount: number}>} distribution - Distribution data.
  */
 const updateDistributionTable = (distribution) => {
   const tableBody = q("#dashboard-distribution-body");
@@ -254,11 +254,11 @@ const updateDistributionTable = (distribution) => {
 };
 
 /**
- * Updates health indicators section
- * @param {Object} health - Health indicators data
- * @param {number} health.savingRate - Saving rate percentage
- * @param {number} health.creditUse - Credit usage percentage
- * @param {number} health.netBalance - Net balance amount
+ * Updates health indicators section.
+ * @param {Object} health - Health indicators data.
+ * @param {number} health.savingRate - Saving rate percentage.
+ * @param {number} health.creditUse - Credit usage percentage.
+ * @param {number} health.netBalance - Net balance amount.
  */
 const updateHealthIndicators = (health) => {
   const savingRate = q("#health-saving-rate");
@@ -271,8 +271,8 @@ const updateHealthIndicators = (health) => {
 };
 
 /**
- * Updates suggestions list
- * @param {Array<string>} suggestions - Array of suggestion strings
+ * Updates suggestions list.
+ * @param {Array<string>} suggestions - Array of suggestion strings.
  */
 const updateSuggestionsList = (suggestions) => {
   const suggestionsList = q("#suggestions-list");
@@ -298,8 +298,8 @@ const updateSuggestionsList = (suggestions) => {
 };
 
 /**
- * Updates cards usage table
- * @param {Array<Object>} cardsUsage - Cards usage data
+ * Updates cards usage table.
+ * @param {Array<Object>} cardsUsage - Cards usage data.
  */
 const updateCardsUsageTable = (cardsUsage) => {
   const tableBody = q("#cards-usage-body");
@@ -317,11 +317,11 @@ const updateCardsUsageTable = (cardsUsage) => {
 };
 
 /**
- * Setup Functions
+ * Setup Functions.
  */
 
 /**
- * Initializes setup form
+ * Initializes setup form.
  */
 const initSetup = () => {
   fillSelect(q("#setup-currency"), OPTIONS.currencies);
@@ -334,8 +334,8 @@ const initSetup = () => {
 };
 
 /**
- * Handles setup form submission
- * @param {Event} event - Form submit event
+ * Handles setup form submission.
+ * @param {Event} event - Form submit event.
  */
 const handleSetupSubmit = async (event) => {
   event.preventDefault();
@@ -358,11 +358,11 @@ const handleSetupSubmit = async (event) => {
 };
 
 /**
- * Expense Management Functions
+ * Expense Management Functions.
  */
 
 /**
- * Initializes expense management
+ * Initializes expense management.
  */
 const initExpenses = async () => {
   setupExpenseForm();
@@ -375,7 +375,7 @@ const initExpenses = async () => {
 };
 
 /**
- * Sets up expense form fields and event listeners
+ * Sets up expense form fields and event listeners.
  */
 const setupExpenseForm = () => {
   fillSelect(q("#expense-recurrence"), OPTIONS.recurrence);
@@ -394,14 +394,14 @@ const setupExpenseForm = () => {
 };
 
 /**
- * Toggles expense recurrence fields visibility
+ * Toggles expense recurrence fields visibility.
  */
 const toggleExpenseRecurrenceFields = () => {
   toggleRecurrenceFields("expense");
 };
 
 /**
- * Toggles expense payment method fields visibility
+ * Toggles expense payment method fields visibility.
  */
 const toggleExpensePaymentFields = () => {
   const paymentMethod = q("#expense-payment")?.value;
@@ -412,7 +412,7 @@ const toggleExpensePaymentFields = () => {
 };
 
 /**
- * Fills expense cards select dropdown
+ * Fills expense cards select dropdown.
  */
 const fillExpenseCardsSelect = async () => {
   const response = await window.cashmoo.listCards();
@@ -430,8 +430,8 @@ const fillExpenseCardsSelect = async () => {
 };
 
 /**
- * Handles expense form submission
- * @param {Event} event - Form submit event
+ * Handles expense form submission.
+ * @param {Event} event - Form submit event.
  */
 const handleExpenseSubmit = async (event) => {
   event.preventDefault();
@@ -449,8 +449,8 @@ const handleExpenseSubmit = async (event) => {
 };
 
 /**
- * Collects expense form data
- * @returns {Object} Expense form data
+ * Collects expense form data.
+ * @returns {Object} Expense form data.
  */
 const collectExpenseFormData = () => {
   const recurrenceType = q("#expense-recurrence")?.value;
@@ -473,12 +473,12 @@ const collectExpenseFormData = () => {
 };
 
 /**
- * Resets expense form to initial state
+ * Resets expense form to initial state.
  */
 const resetExpenseForm = () => {
   editingState.expenseId = null;
   const submit = q("#expense-submit");
-  if (submit) submit.textContent = "Add Expense";
+  if (submit) submit.textContent = "Add expense";
 
   const form = q("#expense-form");
   if (form) form.reset();
@@ -487,7 +487,7 @@ const resetExpenseForm = () => {
 };
 
 /**
- * Fills expenses table with data
+ * Fills expenses table with data.
  */
 const fillExpensesTable = async () => {
   const response = await window.cashmoo.listExpenses();
@@ -503,9 +503,9 @@ const fillExpensesTable = async () => {
 };
 
 /**
- * Creates a table row for an expense
- * @param {Object} expense - Expense data
- * @returns {HTMLTableRowElement} Table row element
+ * Creates a table row for an expense.
+ * @param {Object} expense - Expense data.
+ * @returns {HTMLTableRowElement} Table row element.
  */
 const createExpenseTableRow = (expense) => {
   const row = document.createElement("tr");
@@ -523,9 +523,9 @@ const createExpenseTableRow = (expense) => {
 };
 
 /**
- * Creates action buttons for expense row
- * @param {Object} expense - Expense data
- * @returns {HTMLTableCellElement} Table cell with action buttons
+ * Creates action buttons for expense row.
+ * @param {Object} expense - Expense data.
+ * @returns {HTMLTableCellElement} Table cell with action buttons.
  */
 const createExpenseActionButtons = (expense) => {
   const cell = document.createElement("td");
@@ -554,8 +554,8 @@ const createExpenseActionButtons = (expense) => {
 };
 
 /**
- * Populates form for editing an expense
- * @param {Object} expense - Expense data to edit
+ * Populates form for editing an expense.
+ * @param {Object} expense - Expense data to edit.
  */
 const editExpense = (expense) => {
   editingState.expenseId = expense.id;
@@ -587,8 +587,8 @@ const editExpense = (expense) => {
 };
 
 /**
- * Populates expense recurrence fields based on type
- * @param {Object} expense - Expense data
+ * Populates expense recurrence fields based on type.
+ * @param {Object} expense - Expense data.
  */
 const populateExpenseRecurrenceFields = (expense) => {
   const { recurrence } = expense;
@@ -620,11 +620,11 @@ const populateExpenseRecurrenceFields = (expense) => {
 };
 
 /**
- * Income Management Functions
+ * Income Management Functions.
  */
 
 /**
- * Initializes income management
+ * Initializes income management.
  */
 const initIncomes = async () => {
   setupIncomeForm();
@@ -637,7 +637,7 @@ const initIncomes = async () => {
 };
 
 /**
- * Sets up income form fields and event listeners
+ * Sets up income form fields and event listeners.
  */
 const setupIncomeForm = () => {
   fillSelect(q("#income-recurrence"), OPTIONS.recurrence);
@@ -653,15 +653,15 @@ const setupIncomeForm = () => {
 };
 
 /**
- * Toggles income recurrence fields visibility
+ * Toggles income recurrence fields visibility.
  */
 const toggleIncomeRecurrenceFields = () => {
   toggleRecurrenceFields("income");
 };
 
 /**
- * Handles income form submission
- * @param {Event} event - Form submit event
+ * Handles income form submission.
+ * @param {Event} event - Form submit event.
  */
 const handleIncomeSubmit = async (event) => {
   event.preventDefault();
@@ -679,8 +679,8 @@ const handleIncomeSubmit = async (event) => {
 };
 
 /**
- * Collects income form data
- * @returns {Object} Income form data
+ * Collects income form data.
+ * @returns {Object} Income form data.
  */
 const collectIncomeFormData = () => {
   const recurrenceType = q("#income-recurrence")?.value;
@@ -702,7 +702,7 @@ const collectIncomeFormData = () => {
 };
 
 /**
- * Resets income form to initial state
+ * Resets income form to initial state.
  */
 const resetIncomeForm = () => {
   editingState.incomeId = null;
@@ -716,7 +716,7 @@ const resetIncomeForm = () => {
 };
 
 /**
- * Fills incomes table with data
+ * Fills incomes table with data.
  */
 const fillIncomesTable = async () => {
   const response = await window.cashmoo.listIncomes();
@@ -732,9 +732,9 @@ const fillIncomesTable = async () => {
 };
 
 /**
- * Creates a table row for an income
- * @param {Object} income - Income data
- * @returns {HTMLTableRowElement} Table row element
+ * Creates a table row for an income.
+ * @param {Object} income - Income data.
+ * @returns {HTMLTableRowElement} Table row element.
  */
 const createIncomeTableRow = (income) => {
   const row = document.createElement("tr");
@@ -751,9 +751,9 @@ const createIncomeTableRow = (income) => {
 };
 
 /**
- * Formats income schedule display text
- * @param {Object} income - Income data
- * @returns {string} Formatted schedule text
+ * Formats income schedule display text.
+ * @param {Object} income - Income data.
+ * @returns {string} Formatted schedule text.
  */
 const formatIncomeSchedule = (income) => {
   const { recurrence } = income;
@@ -773,9 +773,9 @@ const formatIncomeSchedule = (income) => {
 };
 
 /**
- * Creates action buttons for income row
- * @param {Object} income - Income data
- * @returns {HTMLTableCellElement} Table cell with action buttons
+ * Creates action buttons for income row.
+ * @param {Object} income - Income data.
+ * @returns {HTMLTableCellElement} Table cell with action buttons.
  */
 const createIncomeActionButtons = (income) => {
   const cell = document.createElement("td");
@@ -804,8 +804,8 @@ const createIncomeActionButtons = (income) => {
 };
 
 /**
- * Populates form for editing an income
- * @param {Object} income - Income data to edit
+ * Populates form for editing an income.
+ * @param {Object} income - Income data to edit.
  */
 const editIncome = (income) => {
   editingState.incomeId = income.id;
@@ -830,8 +830,8 @@ const editIncome = (income) => {
 };
 
 /**
- * Populates income recurrence fields based on type
- * @param {Object} income - Income data
+ * Populates income recurrence fields based on type.
+ * @param {Object} income - Income data.
  */
 const populateIncomeRecurrenceFields = (income) => {
   const { recurrence } = income;
@@ -863,11 +863,11 @@ const populateIncomeRecurrenceFields = (income) => {
 };
 
 /**
- * Card Management Functions
+ * Card Management Functions.
  */
 
 /**
- * Initializes card management
+ * Initializes card management.
  */
 const initCards = async () => {
   await fillCardsTable();
@@ -879,8 +879,8 @@ const initCards = async () => {
 };
 
 /**
- * Handles card form submission
- * @param {Event} event - Form submit event
+ * Handles card form submission.
+ * @param {Event} event - Form submit event.
  */
 const handleCardSubmit = async (event) => {
   event.preventDefault();
@@ -898,8 +898,8 @@ const handleCardSubmit = async (event) => {
 };
 
 /**
- * Collects card form data
- * @returns {Object} Card form data
+ * Collects card form data.
+ * @returns {Object} Card form data.
  */
 const collectCardFormData = () => ({
   name: q("#card-name")?.value.trim(),
@@ -910,7 +910,7 @@ const collectCardFormData = () => ({
 });
 
 /**
- * Resets card form to initial state
+ * Resets card form to initial state.
  */
 const resetCardForm = () => {
   editingState.cardId = null;
@@ -922,7 +922,7 @@ const resetCardForm = () => {
 };
 
 /**
- * Fills cards table with data
+ * Fills cards table with data.
  */
 const fillCardsTable = async () => {
   const response = await window.cashmoo.listCards();
@@ -938,9 +938,9 @@ const fillCardsTable = async () => {
 };
 
 /**
- * Creates a table row for a card
- * @param {Object} card - Card data
- * @returns {HTMLTableRowElement} Table row element
+ * Creates a table row for a card.
+ * @param {Object} card - Card data.
+ * @returns {HTMLTableRowElement} Table row element.
  */
 const createCardTableRow = (card) => {
   const row = document.createElement("tr");
@@ -957,9 +957,9 @@ const createCardTableRow = (card) => {
 };
 
 /**
- * Creates action buttons for card row
- * @param {Object} card - Card data
- * @returns {HTMLTableCellElement} Table cell with action buttons
+ * Creates action buttons for card row.
+ * @param {Object} card - Card data.
+ * @returns {HTMLTableCellElement} Table cell with action buttons.
  */
 const createCardActionButtons = (card) => {
   const cell = document.createElement("td");
@@ -981,8 +981,8 @@ const createCardActionButtons = (card) => {
 };
 
 /**
- * Populates form for editing a card
- * @param {Object} card - Card data to edit
+ * Populates form for editing a card.
+ * @param {Object} card - Card data to edit.
  */
 const editCard = (card) => {
   editingState.cardId = card.id;
@@ -1004,11 +1004,11 @@ const editCard = (card) => {
 };
 
 /**
- * Goal Management Functions
+ * Goal Management Functions.
  */
 
 /**
- * Initializes goal management
+ * Initializes goal management.
  */
 const initGoals = async () => {
   await fillGoalsTable();
@@ -1020,8 +1020,8 @@ const initGoals = async () => {
 };
 
 /**
- * Handles goal form submission
- * @param {Event} event - Form submit event
+ * Handles goal form submission.
+ * @param {Event} event - Form submit event.
  */
 const handleGoalSubmit = async (event) => {
   event.preventDefault();
@@ -1041,8 +1041,8 @@ const handleGoalSubmit = async (event) => {
 };
 
 /**
- * Collects goal form data
- * @returns {Object} Goal form data
+ * Collects goal form data.
+ * @returns {Object} Goal form data.
  */
 const collectGoalFormData = () => ({
   title: q("#goal-title")?.value.trim(),
@@ -1051,7 +1051,7 @@ const collectGoalFormData = () => ({
 });
 
 /**
- * Fills goals table with data
+ * Fills goals table with data.
  */
 const fillGoalsTable = async () => {
   const response = await window.cashmoo.listGoals();
@@ -1067,9 +1067,9 @@ const fillGoalsTable = async () => {
 };
 
 /**
- * Creates a table row for a goal
- * @param {Object} goal - Goal data
- * @returns {HTMLTableRowElement} Table row element
+ * Creates a table row for a goal.
+ * @param {Object} goal - Goal data.
+ * @returns {HTMLTableRowElement} Table row element.
  */
 const createGoalTableRow = (goal) => {
   const row = document.createElement("tr");
@@ -1091,11 +1091,11 @@ const createGoalTableRow = (goal) => {
 };
 
 /**
- * Notification Settings Functions
+ * Notification Settings Functions.
  */
 
 /**
- * Initializes notification settings
+ * Initializes notification settings.
  */
 const initNotifications = async () => {
   await loadNotificationSettings();
@@ -1107,7 +1107,7 @@ const initNotifications = async () => {
 };
 
 /**
- * Loads current notification settings
+ * Loads current notification settings.
  */
 const loadNotificationSettings = async () => {
   const response = await window.cashmoo.getNotifications();
@@ -1123,8 +1123,8 @@ const loadNotificationSettings = async () => {
 };
 
 /**
- * Handles notification form submission
- * @param {Event} event - Form submit event
+ * Handles notification form submission.
+ * @param {Event} event - Form submit event.
  */
 const handleNotificationSubmit = async (event) => {
   event.preventDefault();
@@ -1138,8 +1138,8 @@ const handleNotificationSubmit = async (event) => {
 };
 
 /**
- * Collects notification form data
- * @returns {Object} Notification form data
+ * Collects notification form data.
+ * @returns {Object} Notification form data.
  */
 const collectNotificationFormData = () => ({
   enabled: q("#notifications-enabled")?.checked,
@@ -1148,11 +1148,11 @@ const collectNotificationFormData = () => ({
 });
 
 /**
- * Settings Functions
+ * Settings Functions.
  */
 
 /**
- * Initializes application settings
+ * Initializes application settings.
  */
 const initSettings = async () => {
   await loadApplicationSettings();
@@ -1165,7 +1165,7 @@ const initSettings = async () => {
 };
 
 /**
- * Loads current application settings
+ * Loads current application settings.
  */
 const loadApplicationSettings = async () => {
   const response = await window.cashmoo.getSettings();
@@ -1181,7 +1181,7 @@ const loadApplicationSettings = async () => {
 };
 
 /**
- * Sets up settings page event listeners
+ * Sets up settings page event listeners.
  */
 const setupSettingsEventListeners = () => {
   const exportBtn = q("#export-btn");
@@ -1194,14 +1194,14 @@ const setupSettingsEventListeners = () => {
 };
 
 /**
- * Handles data export operation
+ * Handles data export operation.
  */
 const handleDataExport = async () => {
   await window.cashmoo.exportData();
 };
 
 /**
- * Handles data import operation
+ * Handles data import operation.
  */
 const handleDataImport = async () => {
   const response = await window.cashmoo.importData();
@@ -1213,15 +1213,15 @@ const handleDataImport = async () => {
 };
 
 /**
- * Handles data reset operation
+ * Handles data reset operation.
  */
 const handleDataReset = async () => {
   await window.cashmoo.resetApp();
 };
 
 /**
- * Handles settings form submission
- * @param {Event} event - Form submit event
+ * Handles settings form submission.
+ * @param {Event} event - Form submit event.
  */
 const handleSettingsSubmit = async (event) => {
   event.preventDefault();
@@ -1235,8 +1235,8 @@ const handleSettingsSubmit = async (event) => {
 };
 
 /**
- * Collects settings form data
- * @returns {Object} Settings form data
+ * Collects settings form data.
+ * @returns {Object} Settings form data.
  */
 const collectSettingsFormData = () => ({
   userName: q("#settings-user-name")?.value.trim(),
@@ -1245,8 +1245,8 @@ const collectSettingsFormData = () => ({
 });
 
 /**
- * Main initialization function
- * Determines which page components to initialize based on DOM elements
+ * Main initialization function.
+ * Determines which page components to initialize based on DOM elements.
  */
 window.addEventListener("DOMContentLoaded", async () => {
   const pageInitializers = [

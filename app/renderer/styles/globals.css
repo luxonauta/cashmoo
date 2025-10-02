@@ -178,7 +178,7 @@ p {
  * --------------------------------------------------------------- */
 
 header {
-  padding: calc(var(--space-xl) * 2) 0 0 0;
+  padding: var(--space-xl) 0 0 0;
 
   p {
     margin: var(--space-sm) 0 0;
@@ -188,9 +188,7 @@ header {
 }
 
 main {
-  padding-top: var(--space-md);
-
-  > section:not(:first-child) {
+  > section:not(:first-child, #dashboard) {
     padding-top: var(--space-md);
   }
 
@@ -217,12 +215,16 @@ section {
 }
 
 article {
-  margin-bottom: var(--space-xl);
+  margin: var(--space-xl) 0;
   transform: translateY(0);
   opacity: 1;
   transition:
     opacity var(--transition-fast),
     transform var(--transition-fast);
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
 
   @starting-style {
     transform: translateY(var(--space-sm));
@@ -341,7 +343,7 @@ label {
 
 .help-text {
   margin: var(--space-md) 0 0;
-  color: var(--color-label-tertiary);
+  color: var(--color-label-secondary);
   font-weight: 400;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-relaxed);
@@ -543,12 +545,17 @@ ol {
   border-radius: var(--radius-md);
   background-color: var(--color-background-secondary);
 
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
   .list-item {
     display: flex;
     align-items: center;
     min-height: var(--space-xl);
     margin: 0;
     padding: var(--space-lg) var(--space-xl);
+    gap: var(--space-xl);
     border-bottom: 0.0313rem solid var(--color-separator);
     background-color: transparent;
     transition: background-color var(--transition-fast);
@@ -561,7 +568,7 @@ ol {
     .list-item-title {
       margin: 0 0 var(--space-sm);
       overflow: hidden;
-      font-weight: 400;
+      font-weight: 500;
       font-size: var(--font-size-body);
       line-height: var(--line-height-normal);
       text-overflow: ellipsis;

@@ -1,8 +1,8 @@
 # CashMoo
 
-**Simple and private personal finance control**
+**Simple and private personal finance control.**
 
-CashMoo is a desktop application for managing your personal finances with complete privacy. All your data stays on your computer - nothing is sent to the internet.
+CashMoo is a desktop application for managing your personal finances with complete privacy. All your data stays on your computer. Nothing is sent to the internet.
 
 ## Quick Start
 
@@ -14,28 +14,28 @@ CashMoo is a desktop application for managing your personal finances with comple
 ### Installation
 
 ```bash
-# Clone repository
+# Clone repository.
 git clone https://github.com/luxonauta/cashmoo
 cd cashmoo
 
-# Install dependencies
+# Install dependencies.
 npm install
 
-# Run application
+# Run application.
 npm start
 ```
 
-> On first run, CashMoo will guide you through the initial setup.
+On first run, CashMoo will guide you through the initial setup.
 
 ## Available Scripts
 
 ```bash
-npm start              # Run application
-npm run start:dev      # Run with detailed logging
-npm run build          # Build executable for current platform
-npm run build:win      # Build for Windows
-npm run build:mac      # Build for macOS
-npm run build:linux    # Build for Linux
+npm start              # Run application.
+npm run start:dev      # Run with detailed logging.
+npm run build          # Build executable for current platform.
+npm run build:win      # Build for Windows.
+npm run build:mac      # Build for macOS.
+npm run build:linux    # Build for Linux.
 ```
 
 ## Data Storage
@@ -73,12 +73,12 @@ To use your own icon, place a PNG file (`512x512px` or larger) at `assets/icon.p
 ```
 cashmoo/
 ├── app/
-│   ├── helpers/          # Utility functions
-│   └── renderer/         # User interface
-├── assets/               # Icons and resources
-├── main.js               # Electron main process
-├── preload.js            # Security preload script
-└── package.json          # Configuration and dependencies
+│   ├── helpers/          # Utility functions.
+│   └── renderer/         # User interface.
+├── assets/               # Icons and resources.
+├── main.js               # Electron main process.
+├── preload.js            # Security preload script.
+└── package.json          # Configuration and dependencies.
 ```
 
 ## Contributing
@@ -91,4 +91,4 @@ cashmoo/
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License. See [LICENSE](LICENSE) file for details.

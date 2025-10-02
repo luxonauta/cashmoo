@@ -37,9 +37,9 @@
             <legend>Personal Information</legend>
 
             <div class="form-group">
-              <label for="settings-user-name">Your name</label>
-              <input id="settings-user-name" type="text" maxlength="30" required placeholder="Enter your name" aria-describedby="settings-username-help" />
-              <p id="settings-username-help" class="help-text">This appears in the app interface and can be anything you prefer. Maximum 30 characters.</p>
+              <label for="settings-user-name">Your name *</label>
+              <input id="settings-user-name" type="text" maxlength="30" required placeholder="Enter your name" aria-describedby="settings-user-name-help" />
+              <p id="settings-user-name-help" class="help-text">This appears in the app interface and can be anything you prefer. Maximum 30 characters.</p>
             </div>
           </fieldset>
 
@@ -47,8 +47,8 @@
             <legend>Display Preferences</legend>
 
             <div class="form-group">
-              <label for="settings-currency">Default currency</label>
-              <select id="settings-currency" aria-describedby="settings-currency-help">
+              <label for="settings-currency">Default currency *</label>
+              <select id="settings-currency" required aria-describedby="settings-currency-help">
                 <option value="BRL">Brazilian Real (BRL)</option>
                 <option value="USD">US Dollar (USD)</option>
                 <option value="EUR">Euro (EUR)</option>
@@ -57,12 +57,12 @@
             </div>
 
             <div class="form-group">
-              <label for="settings-date-format">Date format</label>
-              <select id="settings-date-format" aria-describedby="settings-date-help">
+              <label for="settings-date-format">Date format *</label>
+              <select id="settings-date-format" required aria-describedby="settings-date-format-help">
                 <option value="DD/MM/YYYY">Day/Month/Year (DD/MM/YYYY)</option>
                 <option value="MM/DD/YYYY">Month/Day/Year (MM/DD/YYYY)</option>
               </select>
-              <p id="settings-date-help" class="help-text">Choose how dates appear throughout the app. This affects bill due dates, income schedules, and reports.</p>
+              <p id="settings-date-format-help" class="help-text">Choose how dates appear throughout the app. This affects bill due dates, income schedules, and reports.</p>
             </div>
           </fieldset>
 

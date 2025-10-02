@@ -40,19 +40,19 @@
             <legend>Goal Details</legend>
 
             <div class="form-group">
-              <label for="goal-title">Goal name</label>
+              <label for="goal-title">Goal name *</label>
               <input id="goal-title" type="text" maxlength="50" required placeholder="e.g., Emergency Fund, Vacation, New Car" aria-describedby="goal-title-help" />
               <p id="goal-title-help" class="help-text">Give your goal a motivating name that reminds you what you're working toward. Keep it under 50 characters.</p>
             </div>
 
             <div class="form-group">
-              <label for="goal-target">Target amount</label>
+              <label for="goal-target">Target amount *</label>
               <input id="goal-target" type="text" inputmode="decimal" required placeholder="0.00" aria-describedby="goal-target-help" />
               <p id="goal-target-help" class="help-text">How much money do you want to save? Enter the total amount you need to reach your goal.</p>
             </div>
 
             <div class="form-group">
-              <label for="goal-period">Time frame</label>
+              <label for="goal-period">Time frame *</label>
               <select id="goal-period" required aria-describedby="goal-period-help">
                 <option value="monthly">Monthly goal</option>
                 <option value="annual">Annual goal</option>
@@ -86,7 +86,7 @@
         </table>
 
         <div class="empty-state" style="display: none">
-          <p>No goals set yet. Create your first financial goal above to start building your future!</p>
+          <p>No goals set yet. Create your first financial goal above to start building your future.</p>
         </div>
       </section>
     </main>
