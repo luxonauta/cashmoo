@@ -32,11 +32,10 @@ On first run, CashMoo will guide you through the initial setup.
 ```bash
 npm start              # Run application
 npm run start:dev      # Run with detailed logging
-npm run build:all      # Build for all platforms (Windows, macOS, Linux)
-npm run build          # Build executable for current platform
-npm run build:win      # Build for Windows
-npm run build:mac      # Build for macOS
+npm run build:all      # Build for all platforms (Linux, macOS, Windows)
 npm run build:linux    # Build for Linux
+npm run build:mac      # Build for macOS
+npm run build:win      # Build for Windows
 ```
 
 ## Data Storage

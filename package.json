@@ -1,29 +1,30 @@
 {
   "name": "cashmoo",
   "version": "1.0.0",
-  "description": "CashMoo personal finance control",
-  "author": "CashMoo",
+  "description": "🐮 CashMoo personal finance control.",
+  "author": {
+    "name": "Lucas de França",
+    "email": "me@luxonauta.com"
+  },
   "license": "MIT",
-  "main": "main.js",
   "type": "module",
+  "main": "main.js",
+  "electronVersion": "38.2.0",
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
   },
-  "electronVersion": "38.2.0",
   "scripts": {
     "start": "node scripts/setup-icons.js && electron .",
-    "start:dev": "node scripts/setup-icons.js && electron . --enable-logging --inspect",
     "start:debug": "node scripts/setup-icons.js && electron . --enable-logging --inspect --remote-debugging-port=9222",
+    "start:dev": "node scripts/setup-icons.js && electron . --enable-logging --inspect",
     "start:windows": "node scripts/setup-icons.js && set NODE_ENV=production && electron .",
     "lint": "eslint . --fix && prettier . --write",
-    "clean": "npx rimraf node_modules package-lock.json",
-    "prepare": "node scripts/setup-icons.js",
-    "build": "node scripts/setup-icons.js && electron-builder",
-    "build:all": "node scripts/setup-icons.js && electron-builder --win --mac --linux",
-    "build:win": "node scripts/setup-icons.js && electron-builder --win",
-    "build:mac": "node scripts/setup-icons.js && electron-builder --mac",
-    "build:linux": "node scripts/setup-icons.js && electron-builder --linux"
+    "clean": "npx rimraf node_modules package-lock.json dist",
+    "build:all": "node scripts/setup-icons.js && electron-builder --win --mac --linux --publish never && node scripts/cleanup-dist.js",
+    "build:linux": "node scripts/setup-icons.js && electron-builder --linux --publish never && node scripts/cleanup-dist.js",
+    "build:mac": "node scripts/setup-icons.js && electron-builder --mac --publish never && node scripts/cleanup-dist.js",
+    "build:win": "node scripts/setup-icons.js && electron-builder --win --publish never && node scripts/cleanup-dist.js"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -61,72 +62,71 @@
       }
     ],
     "win": {
+      "artifactName": "cashmoo-v${version}-setup.${ext}",
+      "icon": "assets/icons/win/icon.ico",
+      "requestedExecutionLevel": "asInvoker",
       "target": {
-        "target": "nsis",
         "arch": [
           "x64"
-        ]
-      },
-      "icon": "assets/icon.png",
-      "requestedExecutionLevel": "asInvoker",
-      "artifactName": "cashmoo-v${version}-setup.${ext}"
+        ],
+        "target": "nsis"
+      }
     },
     "nsis": {
-      "oneClick": true,
-      "perMachine": false,
       "allowToChangeInstallationDirectory": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "deleteAppDataOnUninstall": false,
-      "installerIcon": "assets/icon.png",
-      "uninstallerIcon": "assets/icon.png"
+      "installerIcon": "assets/icons/win/icon.ico",
+      "oneClick": true,
+      "perMachine": false,
+      "uninstallerIcon": "assets/icons/win/icon.ico"
     },
     "mac": {
+      "artifactName": "cashmoo-v${version}-${arch}.${ext}",
+      "bundleVersion": "1.0.0",
+      "category": "public.app-category.finance",
+      "gatekeeperAssess": false,
+      "hardenedRuntime": true,
+      "icon": "assets/icons/mac/icon.icns",
       "target": {
-        "target": "dmg",
         "arch": [
           "x64",
           "arm64"
-        ]
-      },
-      "icon": "assets/icon.png",
-      "category": "public.app-category.finance",
-      "bundleVersion": "1.0.0",
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "artifactName": "cashmoo-v${version}-${arch}.${ext}"
+        ],
+        "target": "dmg"
+      }
     },
     "dmg": {
-      "title": "${productName} v${version}",
       "backgroundColor": "#ffffff",
-      "window": {
-        "width": 540,
-        "height": 380
-      },
       "contents": [
         {
           "x": 140,
           "y": 180
         },
         {
-          "x": 400,
-          "y": 180,
+          "path": "/Applications",
           "type": "link",
-          "path": "/Applications"
+          "x": 400,
+          "y": 180
         }
       ],
-      "artifactName": "cashmoo-v${version}.${ext}"
+      "title": "${productName} v${version}",
+      "window": {
+        "height": 380,
+        "width": 540
+      }
     },
     "linux": {
+      "artifactName": "cashmoo-v${version}.${ext}",
+      "category": "Office",
+      "icon": "assets/icons/png",
       "target": {
-        "target": "AppImage",
         "arch": [
           "x64"
-        ]
-      },
-      "icon": "assets/icon.png",
-      "category": "Office",
-      "artifactName": "cashmoo-v${version}.${ext}"
+        ],
+        "target": "AppImage"
+      }
     }
   }
 }
