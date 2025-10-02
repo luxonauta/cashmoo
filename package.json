@@ -20,6 +20,7 @@
     "clean": "npx rimraf node_modules package-lock.json",
     "prepare": "node scripts/setup-icons.js",
     "build": "node scripts/setup-icons.js && electron-builder",
+    "build:all": "node scripts/setup-icons.js && electron-builder --win --mac --linux",
     "build:win": "node scripts/setup-icons.js && electron-builder --win",
     "build:mac": "node scripts/setup-icons.js && electron-builder --mac",
     "build:linux": "node scripts/setup-icons.js && electron-builder --linux"
@@ -60,32 +61,43 @@
       }
     ],
     "win": {
-      "target": [
-        "nsis",
-        "portable"
-      ],
+      "target": {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      },
       "icon": "assets/icon.png",
-      "requestedExecutionLevel": "asInvoker"
+      "requestedExecutionLevel": "asInvoker",
+      "artifactName": "cashmoo-v${version}-setup.${ext}"
     },
     "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "assets/icon.png",
+      "uninstallerIcon": "assets/icon.png"
     },
     "mac": {
-      "target": [
-        "dmg",
-        "zip"
-      ],
+      "target": {
+        "target": "dmg",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      },
       "icon": "assets/icon.png",
       "category": "public.app-category.finance",
       "bundleVersion": "1.0.0",
       "hardenedRuntime": true,
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "artifactName": "cashmoo-v${version}-${arch}.${ext}"
     },
     "dmg": {
-      "title": "CashMoo Installer",
+      "title": "${productName} v${version}",
       "backgroundColor": "#ffffff",
       "window": {
         "width": 540,
@@ -102,16 +114,19 @@
           "type": "link",
           "path": "/Applications"
         }
-      ]
+      ],
+      "artifactName": "cashmoo-v${version}.${ext}"
     },
     "linux": {
-      "target": [
-        "AppImage",
-        "deb",
-        "rpm"
-      ],
+      "target": {
+        "target": "AppImage",
+        "arch": [
+          "x64"
+        ]
+      },
       "icon": "assets/icon.png",
-      "category": "Office"
+      "category": "Office",
+      "artifactName": "cashmoo-v${version}.${ext}"
     }
   }
 }
