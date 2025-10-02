@@ -12,19 +12,17 @@
   },
   "electronVersion": "38.2.0",
   "scripts": {
-    "start": "electron .",
-    "start:dev": "electron . --enable-logging --inspect",
-    "start:debug": "electron . --enable-logging --inspect --remote-debugging-port=9222",
-    "start:windows": "set NODE_ENV=production && electron .",
+    "start": "node scripts/setup-icons.js && electron .",
+    "start:dev": "node scripts/setup-icons.js && electron . --enable-logging --inspect",
+    "start:debug": "node scripts/setup-icons.js && electron . --enable-logging --inspect --remote-debugging-port=9222",
+    "start:windows": "node scripts/setup-icons.js && set NODE_ENV=production && electron .",
     "lint": "eslint . --fix && prettier . --write",
     "clean": "npx rimraf node_modules package-lock.json",
-    "icons:prepare": "chmod +x scripts/generate-icons.sh",
-    "icons:generate": "node scripts/generate-icons.js",
-    "icons:verify": "node scripts/verify-icons.js",
-    "build": "electron-builder",
-    "build:win": "electron-builder --win",
-    "build:mac": "electron-builder --mac",
-    "build:linux": "electron-builder --linux"
+    "prepare": "node scripts/setup-icons.js",
+    "build": "node scripts/setup-icons.js && electron-builder",
+    "build:win": "node scripts/setup-icons.js && electron-builder --win",
+    "build:mac": "node scripts/setup-icons.js && electron-builder --mac",
+    "build:linux": "node scripts/setup-icons.js && electron-builder --linux"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -66,33 +64,28 @@
         "nsis",
         "portable"
       ],
-      "icon": "assets/icon.ico",
+      "icon": "assets/icon.png",
       "requestedExecutionLevel": "asInvoker"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "installerIcon": "assets/icon.ico",
-      "uninstallerIcon": "assets/icon.ico"
+      "createStartMenuShortcut": true
     },
     "mac": {
       "target": [
         "dmg",
         "zip"
       ],
-      "icon": "assets/icon.icns",
+      "icon": "assets/icon.png",
       "category": "public.app-category.finance",
       "bundleVersion": "1.0.0",
       "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
+      "gatekeeperAssess": false
     },
     "dmg": {
       "title": "CashMoo Installer",
-      "icon": "assets/icon.icns",
       "backgroundColor": "#ffffff",
       "window": {
         "width": 540,

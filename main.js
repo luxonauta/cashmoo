@@ -13,16 +13,12 @@ let mainWindow = null;
 let notificationTimer = null;
 
 /**
- * Gets the appropriate icon path for the current platform
- * @returns {string|null} Path to the platform-specific icon file, or null if not found
+ * Gets the icon path for the application
+ * @returns {string|null} Path to the icon file, or null if not found
  */
 const getIconPath = () => {
-  const assetsDir = path.join(__dirname, "assets");
+  const iconPath = path.join(__dirname, "assets", "icon.png");
 
-  // Use PNG for all platforms to avoid .icns issues
-  const iconPath = path.join(assetsDir, "icon.png");
-
-  // Check if icon file exists
   try {
     if (fs.existsSync(iconPath)) {
       return iconPath;
@@ -57,7 +53,7 @@ const createWindow = () => {
     titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "default"
   };
 
-  // Add icon if file exists (now using PNG for all platforms)
+  // Add icon if file exists
   if (iconPath) {
     windowConfig.icon = iconPath;
     console.log(`Using icon: ${iconPath}`);
